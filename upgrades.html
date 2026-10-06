@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0f0a" />
+<title>Upgrades · ገበሬ Airdrop</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; -webkit-tap-highlight-color:transparent; }
+body { min-height:100vh; background:#0a0f0a; color:#e8e0d0; }
+.page { max-width:640px; margin:0 auto; padding:16px 14px calc(90px + env(safe-area-inset-bottom)); }
+.header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+.header h1 { font-size:1.3rem; font-weight:800; }
+.back { color:#6a7a5a; text-decoration:none; font-size:.75rem; padding:8px 14px; background:rgba(255,255,255,.04); border-radius:30px; }
+.bal-box { background:linear-gradient(145deg,rgba(0,0,0,.35),rgba(0,0,0,.2)); border-radius:24px; padding:20px; text-align:center; margin-bottom:16px; border:1px solid rgba(255,215,0,.05); }
+.bal-box .amt { font-size:2.2rem; font-weight:900; background:linear-gradient(135deg,#f5e6a0,#d4af37); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.bal-box .lbl { color:#6a7a5a; font-size:.65rem; letter-spacing:2px; text-transform:uppercase; font-weight:700; }
+.card { background:rgba(0,0,0,.25); border-radius:22px; padding:18px; margin-bottom:12px; border:1px solid rgba(255,255,255,.03); display:flex; align-items:center; gap:14px; }
+.card .ic { font-size:2.6rem; flex-shrink:0; }
+.card .info { flex:1; min-width:0; }
+.card .nm { font-weight:800; font-size:.95rem; }
+.card .ds { color:#6a7a5a; font-size:.7rem; margin-top:3px; line-height:1.4; }
+.card .lv { color:#f5e6a0; font-size:.65rem; margin-top:6px; font-weight:700; }
+.card button { background:linear-gradient(135deg,#d4af37,#b8960f); border:none; color:#0a120a; font-weight:800; padding:12px 18px; border-radius:30px; font-size:.75rem; cursor:pointer; min-width:100px; min-height:48px; flex-shrink:0; }
+.card button:disabled { opacity:.35; cursor:not-allowed; }
+.card button .cost { display:block; font-size:.6rem; opacity:.85; font-weight:700; margin-top:2px; }
+.nav { position:fixed; left:0; right:0; bottom:0; display:flex; justify-content:space-around; background:rgba(14,22,16,.98); backdrop-filter:blur(20px); border-top:1px solid rgba(212,175,55,.1); padding:8px 4px calc(8px + env(safe-area-inset-bottom)); z-index:1000; max-width:640px; margin:0 auto; }
+.nav a { display:flex; flex-direction:column; align-items:center; padding:8px 12px; border-radius:16px; text-decoration:none; color:#6a7a5a; font-size:.55rem; font-weight:600; min-width:60px; gap:3px; }
+.nav a .ni { font-size:1.5rem; line-height:1; }
+.nav a.active { color:#d4af37; background:rgba(212,175,55,.08); }
+</style>
+</head>
+<body>
+<div class="page">
+    <div class="header">
+        <h1>⚙️ Upgrades</h1>
+        <a href="index.html" class="back">← Back</a>
+    </div>
+    <div class="bal-box">
+        <div class="lbl">Your Balance</div>
+        <div class="amt"><span id="bal">0</span> G</div>
+    </div>
+    <div id="list"></div>
+</div>
+
+<nav class="nav">
+    <a href="index.html"><span class="ni">📊</span>Home</a>
+    <a href="market.html"><span class="ni">🏪</span>Market</a>
+    <a href="upgrades.html" class="active"><span class="ni">⚙️</span>Upgrade</a>
+    <a href="index.html" onclick="event.preventDefault();location.href='index.html#leader';"><span class="ni">🏆</span>Rank</a>
+</nav>
+
+<script>
+const API = '/api';
+let userId = null, state = null;
+
+async function call(ep, m='GET', d=null) {
+    const o = { method:m, headers:{'Content-Type':'application/json'} };
+    if (d) o.body = JSON.stringify(d);
+    const r = await fetch(API + ep, o);
+    return await r.json();
+}
+
+function auth() {
+    const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+    const user = tgUser || { id: 900000 + Math.floor(Math.random()*99999), first_name:'TestFarmer', username:'test', photo_url:'' };
+    const deviceId = localStorage.getItem('gebere_device_id') || (() => {
+        const id = 'dev_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2,8);
+        localStorage.setItem('gebere_device_id', id);
+        return id;
+    })();
+    return { user, deviceId };
+}
+
+const UPGRADES = {
+    multiplier: { ic:'🔥', nm:'Multiplier', ds:'+10% per level on claimed rewards', base:100, max:20 },
+    coinBoost: { ic:'💰', nm:'Coin Boost', ds:'+5% animal production per level', base:300, max:20 }
+};
+
+function cost(type, lvl) { return Math.floor(UPGRADES[type].base * Math.pow(1.5, lvl)); }
+
+function render() {
+    document.getElementById('bal').textContent = Math.floor(state.coins || 0);
+    const list = document.getElementById('list');
+    list.innerHTML = '';
+    for (const [type, info] of Object.entries(UPGRADES)) {
+        const lvl = state.upgrades?.[type] || 0;
+        const c = cost(type, lvl);
+        const can = (state.coins || 0) >= c && lvl < info.max;
+        list.innerHTML += `
+            <div class="card">
+                <span class="ic">${info.ic}</span>
+                <div class="info">
+                    <div class="nm">${info.nm}</div>
+                    <div class="ds">${info.ds}</div>
+                    <div class="lv">Level ${lvl} / ${info.max}</div>
+                </div>
+                <button ${can ? '' : 'disabled'} onclick="buy('${type}')">
+                    ${lvl >= info.max ? 'MAX' : 'Buy'}
+                    ${lvl < info.max ? `<span class="cost">💰 ${c}</span>` : ''}
+                </button>
+            </div>
+        `;
+    }
+}
+
+async function buy(type) {
+    try {
+        const r = await call('/state/' + userId + '/upgrade', 'POST', { type });
+        if (!r.success) throw new Error(r.error);
+        state = r.data;
+        render();
+    } catch (e) { alert(e.message); }
+}
+
+async function init() {
+    const { user, deviceId } = auth();
+    const r = await call('/auth/telegram', 'POST', { tgUser: user, deviceId });
+    if (!r.verified) { alert(r.message); return; }
+    userId = r.userId;
+    state = r.state;
+    render();
+    setInterval(async () => {
+        const s = await call('/state/' + userId);
+        state = s.data;
+        render();
+    }, 3000);
+}
+
+init();
+</script>
+</body>
+</html>
