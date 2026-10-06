@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<title>🔐 Admin · ገበሬ Airdrop</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
+body { min-height:100vh; background:#0a0f0a; color:#e8e0d0; padding:16px 14px; }
+.login { max-width:420px; margin:60px auto; background:#141e16; border-radius:24px; padding:32px 24px; border:1px solid rgba(212,175,55,.15); text-align:center; }
+.login h1 { color:#d4af37; font-size:1.4rem; margin-bottom:20px; }
+.login input { width:100%; padding:14px; border-radius:14px; border:1px solid rgba(255,255,255,.08); background:rgba(0,0,0,.35); color:#e8e0d0; margin-bottom:10px; font-size:1rem; outline:none; }
+.btn { background:linear-gradient(135deg,#d4af37,#b8960f); border:none; color:#0a120a; font-weight:800; padding:14px 22px; border-radius:30px; cursor:pointer; font-size:.85rem; }
+.btn.danger { background:linear-gradient(135deg,#ef4135,#c72c2c); color:#fff; }
+.btn.green { background:linear-gradient(135deg,#1eb53a,#17a02f); color:#fff; }
+.btn:disabled { opacity:.4; cursor:not-allowed; }
+.btn:active:not(:disabled) { transform:scale(.96); }
+.hidden { display:none; }
+.wrap { max-width:1200px; margin:0 auto; }
+.head { display:flex; justify-content:space-between; align-items:center; background:#141e16; border-radius:20px; padding:16px 18px; margin-bottom:16px; border:1px solid rgba(212,175,55,.15); flex-wrap:wrap; gap:10px; }
+.head h1 { font-size:1.15rem; color:#f5e6a0; }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:14px; margin-bottom:16px; }
+.card { background:#141e16; border-radius:20px; padding:20px; border:1px solid rgba(212,175,55,.1); }
+.card h2 { color:#d4af37; font-size:.75rem; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:14px; font-weight:800; }
+.stat { display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid rgba(255,255,255,.04); font-size:.85rem; }
+.stat .lbl { color:#6a7a5a; }
+.stat .val { color:#f5e6a0; font-weight:800; }
+input, textarea { width:100%; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,.08); background:rgba(0,0,0,.35); color:#e8e0d0; margin-bottom:10px; font-size:.9rem; outline:none; font-family:'Inter',sans-serif; }
+input:focus, textarea:focus { border-color:rgba(212,175,55,.4); }
+label { color:#6a7a5a; font-size:.7rem; display:block; margin-bottom:5px; font-weight:600; }
+table { width:100%; border-collapse:collapse; font-size:.75rem; margin-top:10px; }
+th,td { padding:10px 8px; text-align:left; border-bottom:1px solid rgba(255,255,255,.05); }
+th { color:#6a7a5a; text-transform:uppercase; font-size:.6rem; letter-spacing:1px; font-weight:700; }
+.badge { display:inline-block; padding:3px 10px; border-radius:12px; font-size:.6rem; font-weight:800; }
+.badge.paid { background:rgba(30,181,58,.18); color:#4caf50; }
+.badge.pending { background:rgba(212,175,55,.18); color:#d4af37; }
+.tbl-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+</style>
+</head>
+<body>
+<div id="login" class="login">
+    <h1>🔐 Admin Panel</h1>
+    <input type="text" id="u" placeholder="Username" />
+    <input type="password" id="p" placeholder="Password" />
+    <button class="btn" style="width:100%;margin-top:8px;" onclick="doLogin()">Login</button>
+</div>
+
+<div id="panel" class="wrap hidden">
+    <div class="head">
+        <h1>🔐 ገበሬ Admin</h1>
+        <button class="btn danger" onclick="logout()">Logout</button>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <h2>📊 Summary</h2>
+            <div class="stat"><span class="lbl">Total Users</span><span class="val" id="sUsers">0</span></div>
+            <div class="stat"><span class="lbl">Total Coins</span><span class="val" id="sCoins">0</span></div>
+            <div class="stat"><span class="lbl">Total Tokens</span><span class="val" id="sTokens">0</span></div>
+            <div class="stat"><span class="lbl">Total Birr</span><span class="val" id="sBirr">0</span></div>
+            <div class="stat"><span class="lbl">Claimed Users</span><span class="val" id="sClaimed">0</span></div>
+            <div class="stat"><span class="lbl">Paid Users</span><span class="val" id="sPaid">0</span></div>
+            <div class="stat"><span class="lbl">Airdrop</span><span class="val" id="sStatus">ACTIVE</span></div>
+            <div class="stat"><span class="lbl">Bot</span><span class="val" id="sBot">-</span></div>
+        </div>
+
+        <div class="card">
+            <h2>🎯 Airdrop Control</h2>
+            <button class="btn danger" onclick="endAir()" style="width:100%;margin-bottom:8px;">🛑 END AIRDROP</button>
+            <button class="btn green" onclick="resumeAir()" style="width:100%;margin-bottom:14px;">▶️ Resume Airdrop</button>
+            <label>Token Rate (per coin)</label>
+            <input type="number" id="tRate" step="0.01" value="0.1" />
+            <label>Birr per Token</label>
+            <input type="number" id="bRate" step="0.01" value="10" />
+            <button class="btn" onclick="saveRates()" style="width:100%;margin-bottom:8px;">💾 Save Rates</button>
+            <button class="btn" onclick="calcClaims()" style="width:100%;">🧮 Calculate All Claims</button>
+        </div>
+
+        <div class="card">
+            <h2>📢 Announcement</h2>
+            <textarea id="annText" rows="3" placeholder="Type message..."></textarea>
+            <button class="btn" onclick="sendAnn(true)" style="width:100%;margin-bottom:8px;">📤 Send to All Users</button>
+            <button class="btn danger" onclick="sendAnn(false)" style="width:100%;">❌ Hide Announcement</button>
+            <div style="color:#6a7a5a;font-size:.65rem;margin-top:10px;line-height:1.5;">Sends Telegram broadcast to all users + shows banner on all game pages</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>👥 All Users</h2>
+        <div class="tbl-wrap">
+            <table>
+                <thead>
+                    <tr><th>User</th><th>Coins</th><th>Animals</th><th>Tokens</th><th>Birr</th><th>Telebirr</th><th>Name</th><th>Status</th><th>Action</th></tr>
+                </thead>
+                <tbody id="usersTable"><tr><td colspan="9" style="text-align:center;color:#6a7a5a;">Loading...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+let auth = '';
+
+function doLogin() {
+    const u = document.getElementById('u').value;
+    const p = document.getElementById('p').value;
+    auth = 'Basic ' + btoa(u + ':' + p);
+    test();
+}
+
+async function test() {
+    try {
+        const r = await fetch('/api/admin/summary', { headers: { Authorization: auth } });
+        if (!r.ok) throw new Error('Invalid credentials');
+        document.getElementById('login').classList.add('hidden');
+        document.getElementById('panel').classList.remove('hidden');
+        load();
+        setInterval(load, 5000);
+    } catch (e) { alert(e.message); }
+}
+
+function logout() { auth = ''; location.reload(); }
+
+async function api(ep, m = 'GET', d = null) {
+    const o = { method: m, headers: { Authorization: auth, 'Content-Type': 'application/json' } };
+    if (d) o.body = JSON.stringify(d);
+    const r = await fetch(ep, o);
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || 'Error');
+    return j;
+}
+
+async function load() {
+    try {
+        const sum = await api('/api/admin/summary');
+        const s = sum.data;
+        document.getElementById('sUsers').textContent = s.totalUsers;
+        document.getElementById('sCoins').textContent = Math.floor(s.totalCoins).toLocaleString();
+        document.getElementById('sTokens').textContent = s.totalTokens.toFixed(2);
+        document.getElementById('sBirr').textContent = s.totalBirr.toFixed(2);
+        document.getElementById('sClaimed').textContent = s.claimedUsers;
+        document.getElementById('sPaid').textContent = s.paidUsers;
+        document.getElementById('sStatus').textContent = s.airdropEnded ? '❌ ENDED' : '✅ ACTIVE';
+        document.getElementById('sStatus').style.color = s.airdropEnded ? '#ef4135' : '#4caf50';
+        document.getElementById('sBot').textContent = s.botOnline ? '✅ ONLINE' : '❌ OFFLINE';
+        document.getElementById('tRate').value = s.tokenRate;
+        document.getElementById('bRate').value = s.birrPerToken;
+
+        const users = await api('/api/admin/users');
+        const tb = document.getElementById('usersTable');
+        if (!users.data.length) { tb.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#6a7a5a;">No users</td></tr>'; return; }
+        tb.innerHTML = users.data.map(u => `
+            <tr>
+                <td>${u.userName}</td>
+                <td>${u.coins.toLocaleString()}</td>
+                <td>${u.animals}</td>
+                <td>${u.claimed?.tokens || 0}</td>
+                <td>${u.claimed?.birr || 0}</td>
+                <td>${u.telebirr?.account || '-'}</td>
+                <td>${u.telebirr?.name || '-'}</td>
+                <td>${u.claimed?.paid ? '<span class="badge paid">PAID</span>' : (u.claimed?.tokens ? '<span class="badge pending">PENDING</span>' : '-')}</td>
+                <td>${u.claimed?.tokens && !u.claimed.paid ? `<button class="btn" style="padding:6px 12px;font-size:.7rem;" onclick="markPaid('${u.userId}')">Mark Paid</button>` : ''}</td>
+            </tr>
+        `).join('');
+    } catch (e) { console.error(e); }
+}
+
+async function endAir() {
+    if (!confirm('END AIRDROP? Users will see the end screen.')) return;
+    await api('/api/admin/end-airdrop', 'POST'); load();
+}
+async function resumeAir() {
+    if (!confirm('Resume airdrop?')) return;
+    await api('/api/admin/resume-airdrop', 'POST'); load();
+}
+async function saveRates() {
+    const t = parseFloat(document.getElementById('tRate').value);
+    const b = parseFloat(document.getElementById('bRate').value);
+    await api('/api/admin/set-rates', 'POST', { tokenRate: t, birrPerToken: b });
+    alert('✅ Saved'); load();
+}
+async function calcClaims() {
+    if (!confirm('Convert all coins to tokens for every user?')) return;
+    const r = await api('/api/admin/calculate-claims', 'POST');
+    alert(`✅ Calculated for ${r.count} users`); load();
+}
+async function sendAnn(active) {
+    const message = document.getElementById('annText').value.trim();
+    const r = await api('/api/admin/announcement', 'POST', { message, active });
+    alert(active ? `✅ Sent to ${r.broadcastSent} Telegram users` : 'Hidden');
+}
+async function markPaid(id) {
+    await api('/api/admin/mark-paid/' + id, 'POST'); load();
+}
+</script>
+</body>
+</html>
