@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0f0a" />
+<title>ገበሬ Airdrop</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; -webkit-tap-highlight-color:transparent; }
+html, body { width:100%; min-height:100vh; }
+body { background:#0a0f0a; color:#e8e0d0; padding:0; overflow-x:hidden; }
+body.no-scroll { overflow:hidden; position:fixed; width:100%; }
+
+/* Full-width mobile layout */
+.page { width:100%; max-width:640px; margin:0 auto; padding:16px 14px calc(80px + env(safe-area-inset-bottom)); }
+
+/* Loading */
+#loading { position:fixed; inset:0; background:#0a0f0a; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:9999; transition:opacity .6s; padding:20px; }
+#loading.hidden { opacity:0; pointer-events:none; }
+.load-icon { font-size:4.5rem; animation:pulse 1.5s infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.1);} }
+.load-title { font-size:1.8rem; font-weight:800; background:linear-gradient(135deg,#f5e6a0,#d4af37); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-top:12px; }
+.load-sub { color:#6a7a5a; font-size:.7rem; letter-spacing:2px; text-transform:uppercase; margin-top:4px; }
+.load-track { width:min(240px,80vw); height:5px; background:rgba(255,255,255,.08); border-radius:10px; margin-top:18px; overflow:hidden; }
+.load-bar { height:100%; width:0%; background:linear-gradient(90deg,#d4af37,#f5e6a0); transition:width .15s; }
+.load-pct { color:#aabb8a; font-size:.8rem; margin-top:8px; font-weight:600; }
+.load-brand { color:#4a5a4a; font-size:.7rem; margin-top:24px; letter-spacing:1px; }
+.load-brand span { color:#d4af37; font-weight:600; }
+
+/* Modal */
+#modal { position:fixed; inset:0; background:rgba(0,0,0,.9); display:none; align-items:center; justify-content:center; z-index:10000; padding:16px; }
+#modal.active { display:flex; }
+.modal-box { background:#141e16; border-radius:24px; padding:32px 22px; max-width:400px; width:100%; border:1px solid rgba(212,175,55,.15); text-align:center; }
+.modal-icon { font-size:3.5rem; }
+.modal-title { color:#ef4135; font-weight:800; margin:10px 0; font-size:1.2rem; }
+.modal-desc { color:#aabb8a; font-size:.9rem; line-height:1.55; margin-bottom:20px; }
+.modal-btn { background:linear-gradient(135deg,#d4af37,#b8960f); border:none; color:#0a120a; font-weight:700; padding:14px; border-radius:60px; width:100%; cursor:pointer; font-size:.95rem; }
+
+/* App container */
+#app { display:none; }
+#app.visible { display:block; }
+
+/* Announcement */
+.ann-bar { display:none; background:linear-gradient(90deg,rgba(212,175,55,.18),rgba(212,175,55,.06)); border:1px solid rgba(212,175,55,.3); border-radius:14px; padding:12px 14px; margin-bottom:14px; color:#f5e6a0; font-size:.8rem; text-align:center; line-height:1.4; }
+.ann-bar.active { display:block; }
+
+/* Header */
+.header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+.logo-row { display:flex; align-items:center; gap:10px; }
+.logo-icon { font-size:2rem; }
+.logo-title { font-size:1.25rem; font-weight:800; background:linear-gradient(135deg,#f5e6a0,#d4af37); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1; }
+.logo-sub { color:#6a7a5a; font-size:.55rem; letter-spacing:1.5px; margin-top:2px; }
+.badge { background:rgba(212,175,55,.08); padding:6px 14px; border-radius:40px; font-size:.6rem; font-weight:700; color:#d4af37; display:flex; align-items:center; gap:6px; letter-spacing:1px; }
+.dot { width:8px; height:8px; background:#4caf50; border-radius:50%; animation:pulse2 1.5s infinite; }
+@keyframes pulse2 { 0%,100%{opacity:1; transform:scale(1);} 50%{opacity:.5; transform:scale(.8);} }
+
+/* User card */
+.user-card { display:flex; align-items:center; gap:12px; background:rgba(0,0,0,.25); border-radius:24px; padding:10px 14px 10px 10px; margin-bottom:16px; border:1px solid rgba(255,255,255,.03); }
+.avatar { width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,#1a2a1a,#0f1a0f); border:2px solid rgba(212,175,55,.15); display:flex; align-items:center; justify-content:center; font-weight:700; color:#d4af37; overflow:hidden; flex-shrink:0; font-size:1rem; }
+.avatar img { width:100%; height:100%; object-fit:cover; }
+.user-info { flex:1; min-width:0; }
+.user-name { font-weight:700; font-size:.9rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.user-id { font-size:.6rem; color:#6a7a5a; margin-top:2px; }
+.user-bal { font-size:.75rem; font-weight:800; color:#d4af37; background:rgba(212,175,55,.1); padding:4px 12px; border-radius:20px; white-space:nowrap; }
+
+/* Balance card */
+.bal-card { background:linear-gradient(145deg,rgba(0,0,0,.35),rgba(0,0,0,.2)); border-radius:28px; padding:20px 22px; margin-bottom:16px; border:1px solid rgba(255,215,0,.05); position:relative; overflow:hidden; }
+.bal-card::before { content:''; position:absolute; top:-30%; right:-20%; width:220px; height:220px; background:radial-gradient(circle,rgba(212,175,55,.08),transparent 70%); pointer-events:none; }
+.bal-lbl { color:#6a7a5a; font-size:.6rem; text-transform:uppercase; letter-spacing:2px; font-weight:700; }
+.bal-amt { font-size:3.2rem; font-weight:900; background:linear-gradient(135deg,#f5e6a0,#d4af37); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1.05; margin-top:4px; display:flex; align-items:baseline; gap:6px; }
+.bal-amt .u { font-size:1.6rem; -webkit-text-fill-color:#d4af37; opacity:.7; }
+.bal-sub { display:flex; gap:16px; margin-top:8px; color:#6a7a5a; font-size:.75rem; flex-wrap:wrap; font-weight:500; }
+.bal-sub span { color:#aabb8a; }
+.bal-sub .hi { color:#d4af37; font-weight:700; }
+
+/* Claim card */
+.claim-card { background:linear-gradient(145deg,rgba(212,175,55,.06),rgba(212,175,55,.01)); border-radius:24px; padding:18px 16px; margin-bottom:16px; border:1px solid rgba(212,175,55,.1); }
+.claim-lbl { color:#6a7a5a; font-size:.65rem; text-transform:uppercase; letter-spacing:2px; font-weight:700; text-align:center; }
+.claim-amt { font-size:2.2rem; font-weight:900; color:#f5e6a0; text-align:center; margin:6px 0 10px; }
+.claim-amt .u { font-size:1.4rem; color:#d4af37; opacity:.7; }
+.cd-select { display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin-bottom:10px; }
+.cd-btn { background:rgba(0,0,0,.25); border:1px solid rgba(255,255,255,.05); color:#6a7a5a; padding:8px 14px; border-radius:30px; font-size:.7rem; font-weight:700; cursor:pointer; min-height:36px; }
+.cd-btn.active { background:rgba(212,175,55,.15); border-color:rgba(212,175,55,.4); color:#d4af37; }
+.timers { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:10px 0; }
+.tbox { background:rgba(0,0,0,.2); border-radius:14px; padding:10px; text-align:center; }
+.tbox .lbl { color:#6a7a5a; font-size:.5rem; text-transform:uppercase; letter-spacing:1px; font-weight:600; }
+.tbox .disp { font-family:'Courier New',monospace; font-size:1.4rem; font-weight:800; color:#d4af37; margin-top:2px; letter-spacing:1px; }
+.tbox .disp.exp { color:#ef4135; }
+.tbox .disp.rdy { color:#4caf50; }
+.claim-btn { background:linear-gradient(135deg,#d4af37,#b8960f); border:none; color:#0a120a; font-weight:800; padding:16px; border-radius:60px; font-size:1rem; cursor:pointer; width:100%; min-height:54px; letter-spacing:.5px; }
+.claim-btn:disabled { opacity:.35; cursor:not-allowed; }
+.claim-btn:active:not(:disabled) { transform:scale(.97); }
+.claim-note { color:#6a7a5a; font-size:.55rem; margin-top:8px; text-align:center; }
+
+/* Animals */
+.animals { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:16px; }
+@media(min-width:420px){ .animals { grid-template-columns:repeat(4,1fr); gap:8px; } }
+.animal { background:rgba(0,0,0,.22); border-radius:20px; padding:14px 8px; text-align:center; border:1px solid rgba(255,255,255,.03); }
+.animal .ic { font-size:2.2rem; line-height:1; }
+.animal .ct { color:#d4af37; font-size:1.3rem; font-weight:800; margin-top:4px; }
+.animal .lb { color:#6a7a5a; font-size:.55rem; text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
+.animal .ea { color:#aabb8a; font-size:.6rem; margin-top:4px; font-weight:600; }
+
+/* Nav - fixed at bottom */
+.nav { position:fixed; left:0; right:0; bottom:0; display:flex; justify-content:space-around; background:rgba(14,22,16,.98); backdrop-filter:blur(20px); border-top:1px solid rgba(212,175,55,.1); padding:8px 4px calc(8px + env(safe-area-inset-bottom)); z-index:1000; max-width:640px; margin:0 auto; }
+.nav a { display:flex; flex-direction:column; align-items:center; padding:8px 12px; border-radius:16px; text-decoration:none; color:#6a7a5a; font-size:.55rem; font-weight:600; min-width:60px; gap:3px; }
+.nav a .ni { font-size:1.5rem; line-height:1; }
+.nav a.active { color:#d4af37; background:rgba(212,175,55,.08); }
+.nav a:active { transform:scale(.92); }
+
+/* Footer */
+.footer { text-align:center; padding:20px 0 10px; }
+.footer .br { color:#4a5a4a; font-size:.6rem; }
+.footer .br span { color:#d4af37; font-weight:700; }
+
+/* End overlay */
+#endOverlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.96); z-index:99999; align-items:center; justify-content:center; padding:20px; overflow-y:auto; }
+#endOverlay.active { display:flex; }
+.end-box { background:#141e16; border-radius:28px; padding:32px 24px; max-width:440px; width:100%; text-align:center; border:2px solid rgba(212,175,55,.35); }
+.end-title { font-size:1.7rem; font-weight:900; color:#ef4135; margin-bottom:14px; }
+.end-desc { color:#aabb8a; font-size:.9rem; line-height:1.65; margin-bottom:22px; }
+.end-desc strong { color:#f5e6a0; font-weight:800; }
+.end-input { width:100%; padding:16px; border-radius:16px; border:1px solid rgba(255,255,255,.08); background:rgba(0,0,0,.35); color:#e8e0d0; margin-bottom:10px; font-size:1rem; outline:none; }
+.end-input:focus { border-color:rgba(212,175,55,.4); }
+.end-btn { background:linear-gradient(135deg,#d4af37,#b8960f); border:none; color:#0a120a; font-weight:800; padding:14px; border-radius:60px; font-size:1rem; cursor:pointer; width:100%; margin-top:8px; min-height:52px; }
+
+/* Leaderboard modal */
+#leaderModal { position:fixed; inset:0; background:rgba(0,0,0,.92); z-index:10001; display:none; align-items:flex-start; justify-content:center; padding:60px 16px 20px; overflow-y:auto; }
+#leaderModal.active { display:flex; }
+.leader-box { background:#141e16; border-radius:24px; padding:20px; max-width:480px; width:100%; border:1px solid rgba(212,175,55,.15); }
+.leader-title { color:#f5e6a0; font-size:1.2rem; font-weight:800; text-align:center; margin-bottom:16px; }
+.rank-item { display:flex; align-items:center; gap:12px; background:rgba(0,0,0,.28); border-radius:14px; padding:12px 14px; margin-bottom:6px; }
+.rank-item.top-1 { border:1px solid rgba(255,215,0,.5); background:linear-gradient(90deg,rgba(255,215,0,.08),rgba(0,0,0,.28)); }
+.rank-item.top-2 { border:1px solid rgba(192,192,192,.4); }
+.rank-item.top-3 { border:1px solid rgba(205,127,50,.4); }
+.rank-n { color:#6a7a5a; font-weight:800; min-width:32px; font-size:.9rem; }
+.rank-item.top-1 .rank-n { color:#ffd700; font-size:1.1rem; }
+.rank-item.top-2 .rank-n { color:#c0c0c0; }
+.rank-item.top-3 .rank-n { color:#cd7f32; }
+.rank-nm { flex:1; font-size:.85rem; font-weight:600; }
+.rank-c { color:#d4af37; font-weight:800; font-size:.85rem; }
+.leader-close { background:rgba(255,255,255,.06); border:none; color:#aabb8a; padding:14px; border-radius:30px; width:100%; margin-top:14px; cursor:pointer; font-weight:700; font-size:.85rem; }
+</style>
+</head>
+<body>
+
+<div id="loading">
+    <div class="load-icon">🌾</div>
+    <div class="load-title">ገበሬ Airdrop</div>
+    <div class="load-sub">Farmer Airdrop</div>
+    <div class="load-track"><div class="load-bar" id="loadBar"></div></div>
+    <div class="load-pct" id="loadPct">0%</div>
+    <div class="load-brand">⚡ Powered by <span>Ace Spy Games</span></div>
+</div>
+
+<div id="modal">
+    <div class="modal-box">
+        <div class="modal-icon">🚫</div>
+        <div class="modal-title">Access Denied</div>
+        <div class="modal-desc" id="modalMsg">Multi-account detected.</div>
+        <button class="modal-btn" onclick="location.reload()">Try Again</button>
+    </div>
+</div>
+
+<div id="endOverlay">
+    <div class="end-box">
+        <div class="end-title">🎉 AIRDROP ENDED</div>
+        <div class="end-desc" id="endDesc">Please enter your Telebirr info.</div>
+        <input type="tel" id="tAccount" class="end-input" placeholder="Telebirr Account Number" />
+        <input type="text" id="tName" class="end-input" placeholder="Full Name on Account" />
+        <button class="end-btn" onclick="submitTelebirr()">Submit Telebirr</button>
+    </div>
+</div>
+
+<div id="leaderModal">
+    <div class="leader-box">
+        <div class="leader-title">🏆 TOP FARMERS</div>
+        <div id="leaderList"></div>
+        <button class="leader-close" onclick="document.getElementById('leaderModal').classList.remove('active'); document.body.classList.remove('no-scroll');">Close</button>
+    </div>
+</div>
+
+<div id="app" class="page">
+    <div class="ann-bar" id="annBar"></div>
+
+    <div class="header">
+        <div class="logo-row">
+            <span class="logo-icon">🌾</span>
+            <div>
+                <div class="logo-title">ገበሬ Airdrop</div>
+                <div class="logo-sub">FARMER AIRDROP</div>
+            </div>
+        </div>
+        <div class="badge"><span class="dot"></span>LIVE</div>
+    </div>
+
+    <div class="user-card">
+        <div class="avatar" id="avatar">👤</div>
+        <div class="user-info">
+            <div class="user-name" id="uname">Loading...</div>
+            <div class="user-id" id="uid">#0000</div>
+        </div>
+        <span class="user-bal">🪙 <span id="ubal">0</span> G</span>
+    </div>
+
+    <div class="bal-card">
+        <div class="bal-lbl">💰 BALANCE</div>
+        <div class="bal-amt"><span id="bal">0</span> <span class="u">G</span></div>
+        <div class="bal-sub">
+            <span>🌾 <span id="wheat">0</span> Wheat</span>
+            <span>⚡ <span id="rate">0.00</span>/s</span>
+            <span>🐄 <span class="hi" id="perhour">0</span>/hr</span>
+        </div>
+    </div>
+
+    <div class="claim-card">
+        <div class="claim-lbl">🪙 PENDING REWARD</div>
+        <div class="claim-amt"><span id="pending">0.00</span> <span class="u">G</span></div>
+        <div class="cd-select">
+            <button class="cd-btn active" data-h="4">4h</button>
+            <button class="cd-btn" data-h="8">8h</button>
+            <button class="cd-btn" data-h="12">12h</button>
+            <button class="cd-btn" data-h="16">16h</button>
+            <button class="cd-btn" data-h="24">24h</button>
+        </div>
+        <div class="timers">
+            <div class="tbox"><div class="lbl">⏳ Next Claim</div><div class="disp" id="tNext">24:00:00</div></div>
+            <div class="tbox"><div class="lbl">⚠️ Expires In</div><div class="disp" id="tExp">24:00:00</div></div>
+        </div>
+        <button class="claim-btn" id="claimBtn" disabled>🚀 CLAIM NOW</button>
+        <div class="claim-note">Earns only while the app is open</div>
+    </div>
+
+    <div class="animals">
+        <div class="animal"><div class="ic">🐑</div><div class="ct" id="cSheep">0</div><div class="lb">Sheep</div><div class="ea" id="eSheep">+0/hr</div></div>
+        <div class="animal"><div class="ic">🐐</div><div class="ct" id="cGoat">0</div><div class="lb">Goat</div><div class="ea" id="eGoat">+0/hr</div></div>
+        <div class="animal"><div class="ic">🐄</div><div class="ct" id="cCow">0</div><div class="lb">Cow</div><div class="ea" id="eCow">+0/hr</div></div>
+        <div class="animal"><div class="ic">🐔</div><div class="ct" id="cHen">0</div><div class="lb">Hen</div><div class="ea" id="eHen">+0/hr</div></div>
+    </div>
+
+    <div class="footer">
+        <div class="br">⚡ Powered by <span>Ace Spy Games</span></div>
+    </div>
+</div>
+
+<nav class="nav">
+    <a href="index.html" class="active"><span class="ni">📊</span>Home</a>
+    <a href="market.html"><span class="ni">🏪</span>Market</a>
+    <a href="upgrades.html"><span class="ni">⚙️</span>Upgrade</a>
+    <a href="#" onclick="openLeader();return false;"><span class="ni">🏆</span>Rank</a>
+</nav>
+
+<script>
+const tg = window.Telegram?.WebApp;
+if (tg) { tg.ready(); tg.expand(); tg.setHeaderColor?.('#0a0f0a'); }
+
+const API = '/api';
+let userId = null;
+let state = null;
+let cfg = { airdropEnded: false };
+let tickTimer = null;
+let lastTick = Date.now();
+
+function getDeviceId() {
+    let id = localStorage.getItem('gebere_device_id');
+    if (!id) {
+        id = 'dev_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 8);
+        localStorage.setItem('gebere_device_id', id);
+    }
+    return id;
+}
+const deviceId = getDeviceId();
+
+async function call(ep, method = 'GET', data = null) {
+    const opt = { method, headers: { 'Content-Type': 'application/json' } };
+    if (data) opt.body = JSON.stringify(data);
+    const r = await fetch(API + ep, opt);
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || 'Error');
+    return j;
+}
+
+async function authTelegram() {
+    const tgUser = tg?.initDataUnsafe?.user;
+    const user = tgUser || {
+        id: 900000 + Math.floor(Math.random() * 99999),
+        first_name: 'TestFarmer',
+        username: 'test',
+        photo_url: ''
+    };
+    try {
+        const r = await call('/auth/telegram', 'POST', { tgUser: user, deviceId });
+        if (!r.verified) {
+            document.getElementById('modalMsg').textContent = r.message || 'Access denied';
+            document.getElementById('modal').classList.add('active');
+            return null;
+        }
+        userId = r.userId;
+        state = r.state;
+        return r;
+    } catch (e) {
+        document.getElementById('modalMsg').textContent = 'Login failed';
+        document.getElementById('modal').classList.add('active');
+        return null;
+    }
+}
+
+async function loadCfg() {
+    try {
+        const r = await call('/config/public');
+        cfg = r.data;
+        if (cfg.airdropEnded) showEnd();
+    } catch {}
+}
+
+async function loadAnn() {
+    try {
+        const r = await call('/announcement');
+        const bar = document.getElementById('annBar');
+        if (r.data.active && r.data.message) {
+            bar.textContent = '📢 ' + r.data.message;
+            bar.classList.add('active');
+        } else {
+            bar.classList.remove('active');
+        }
+    } catch {}
+}
+
+async function saveState() {
+    if (!userId || !state) return;
+    try { await call('/state/' + userId, 'POST', { state }); } catch {}
+}
+
+function startTick() {
+    if (tickTimer) clearInterval(tickTimer);
+    lastTick = Date.now();
+    tickTimer = setInterval(async () => {
+        const now = Date.now();
+        const elapsed = (now - lastTick) / 1000;
+        lastTick = now;
+        if (elapsed < 0.5 || elapsed > 3) return;
+        try {
+            const r = await call('/state/' + userId + '/tick', 'POST', { elapsedSeconds: elapsed });
+            if (r.success) {
+                state.pendingCoins = r.pendingCoins;
+                updateUI();
+            }
+        } catch {}
+    }, 1000);
+}
+function stopTick() { if (tickTimer) clearInterval(tickTimer); tickTimer = null; }
+
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stopTick();
+    else if (userId) startTick();
+});
+
+async function claim() {
+    try {
+        const r = await call('/state/' + userId + '/claim', 'POST', { claimCooldown: state.claimCooldown });
+        if (r.success) {
+            state.coins = r.newBalance;
+            state.pendingCoins = 0;
+            state.lastClaimTime = Date.now();
+            updateUI();
+        }
+    } catch (e) { alert(e.message); }
+}
+
+function fmt(ms) {
+    if (ms <= 0) return '00:00:00';
+    const h = Math.floor(ms / 3600000);
+    const m = Math.floor((ms % 3600000) / 60000);
+    const s = Math.floor((ms % 60000) / 1000);
+    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+function updateUI() {
+    if (!state) return;
+    document.getElementById('bal').textContent = Math.floor(state.coins || 0);
+    document.getElementById('ubal').textContent = Math.floor(state.coins || 0);
+    document.getElementById('wheat').textContent = Math.floor(state.wheat || 0);
+    document.getElementById('pending').textContent = (state.pendingCoins || 0).toFixed(2);
+
+    const sheep = (state.sheep || 0) * 0.03;
+    const goat = (state.goat || 0) * 0.05;
+    const cow = (state.cow || 0) * 0.12;
+    const hen = (state.hen || 0) * 0.02;
+    let rate = sheep + goat + cow + hen;
+    rate *= 1 + (state.upgrades?.coinBoost || 0) * 0.05;
+
+    document.getElementById('rate').textContent = rate.toFixed(2);
+    document.getElementById('perhour').textContent = (rate * 3600).toFixed(0);
+
+    document.getElementById('cSheep').textContent = state.sheep || 0;
+    document.getElementById('cGoat').textContent = state.goat || 0;
+    document.getElementById('cCow').textContent = state.cow || 0;
+    document.getElementById('cHen').textContent = state.hen || 0;
+    document.getElementById('eSheep').textContent = '+' + (sheep * 3600).toFixed(0) + '/hr';
+    document.getElementById('eGoat').textContent = '+' + (goat * 3600).toFixed(0) + '/hr';
+    document.getElementById('eCow').textContent = '+' + (cow * 3600).toFixed(0) + '/hr';
+    document.getElementById('eHen').textContent = '+' + (hen * 3600).toFixed(0) + '/hr';
+
+    document.getElementById('uname').textContent = state.userName || 'Farmer';
+    document.getElementById('uid').textContent = '#' + (userId || '').slice(-6);
+    const av = document.getElementById('avatar');
+    if (state.avatar) av.innerHTML = `<img src="${state.avatar}">`;
+    else av.textContent = (state.userName || 'F')[0].toUpperCase();
+
+    const now = Date.now();
+    const elapsed = now - (state.lastClaimTime || now);
+    const cooldown = state.claimCooldown || 14400000;
+    const win = 86400000;
+    const rC = cooldown - elapsed;
+    const rW = win - elapsed;
+
+    const tN = document.getElementById('tNext');
+    const tE = document.getElementById('tExp');
+    const btn = document.getElementById('claimBtn');
+
+    if (rC <= 0) { tN.textContent = '00:00:00'; tN.className = 'disp rdy'; }
+    else { tN.textContent = fmt(rC); tN.className = 'disp'; }
+    if (rW <= 0) { tE.textContent = '00:00:00'; tE.className = 'disp exp'; }
+    else { tE.textContent = fmt(rW); tE.className = 'disp'; }
+
+    const can = rC <= 0 && rW > 0 && (state.pendingCoins || 0) > 0;
+    btn.disabled = !can;
+    btn.textContent = can ? '🚀 CLAIM NOW' : (rW <= 0 ? '⏳ EXPIRED' : '⏳ WAIT');
+}
+
+function showEnd() {
+    document.getElementById('endOverlay').classList.add('active');
+    if (state && state.claimed) {
+        document.getElementById('endDesc').innerHTML =
+            `Coins: <strong>${Math.floor(state.coins || 0)} G</strong><br>` +
+            `Tokens: <strong>${state.claimed.tokens || 0}</strong><br>` +
+            `Value: <strong>${state.claimed.birr || 0} Birr</strong><br><br>` +
+            `Enter your Telebirr account to receive payment.`;
+    }
+}
+
+async function submitTelebirr() {
+    const account = document.getElementById('tAccount').value.trim();
+    const name = document.getElementById('tName').value.trim();
+    if (!account || !name) return alert('Please fill both fields');
+    try {
+        await call('/state/' + userId + '/telebirr', 'POST', { account, name });
+        alert('✅ Submitted! Admin will process payment.');
+    } catch (e) { alert(e.message); }
+}
+
+async function openLeader() {
+    try {
+        const r = await call('/leaderboard');
+        const list = document.getElementById('leaderList');
+        if (!r.data.length) list.innerHTML = '<div style="text-align:center;color:#6a7a5a;padding:20px;">No players yet</div>';
+        else list.innerHTML = r.data.slice(0, 30).map((u, i) => `
+            <div class="rank-item ${i < 3 ? 'top-' + (i+1) : ''}">
+                <span class="rank-n">#${i+1}</span>
+                <span class="rank-nm">${u.userName}</span>
+                <span class="rank-c">${u.coins.toLocaleString()} G</span>
+            </div>
+        `).join('');
+        document.getElementById('leaderModal').classList.add('active');
+        document.body.classList.add('no-scroll');
+    } catch {}
+}
+
+function runLoading() {
+    return new Promise((res) => {
+        const bar = document.getElementById('loadBar');
+        const pct = document.getElementById('loadPct');
+        let p = 0;
+        const iv = setInterval(() => {
+            p += 3 + Math.random() * 4;
+            if (p >= 100) {
+                p = 100;
+                clearInterval(iv);
+                setTimeout(() => {
+                    document.getElementById('loading').classList.add('hidden');
+                    document.getElementById('app').classList.add('visible');
+                    res();
+                }, 300);
+            }
+            bar.style.width = p + '%';
+            pct.textContent = Math.floor(p) + '%';
+        }, 70);
+    });
+}
+
+async function init() {
+    const auth = await authTelegram();
+    if (!auth) { await runLoading(); return; }
+    await loadCfg();
+    await loadAnn();
+    await runLoading();
+
+    document.getElementById('claimBtn').addEventListener('click', claim);
+    document.querySelectorAll('.cd-btn').forEach(b => {
+        b.addEventListener('click', function() {
+            const h = parseInt(this.dataset.h);
+            if (h * 3600000 > 86400000) return;
+            state.claimCooldown = h * 3600000;
+            saveState();
+            document.querySelectorAll('.cd-btn').forEach(x => x.classList.remove('active'));
+            this.classList.add('active');
+            updateUI();
+        });
+    });
+
+    if (!document.hidden) startTick();
+    setInterval(updateUI, 1000);
+    setInterval(() => { loadAnn(); loadCfg(); }, 15000);
+    setInterval(() => { if (!document.hidden) saveState(); }, 10000);
+
+    updateUI();
+    if (cfg.airdropEnded) showEnd();
+}
+
+init();
+</script>
+</body>
+</html>
