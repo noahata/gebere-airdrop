@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0f0a" />
+<title>Market · ገበሬ Airdrop</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; -webkit-tap-highlight-color:transparent; }
+body { min-height:100vh; background:#0a0f0a; color:#e8e0d0; padding-bottom:env(safe-area-inset-bottom); }
+.page { max-width:640px; margin:0 auto; padding:16px 14px calc(90px + env(safe-area-inset-bottom)); }
+.header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+.header h1 { font-size:1.3rem; font-weight:800; }
+.back { color:#6a7a5a; text-decoration:none; font-size:.75rem; padding:8px 14px; background:rgba(255,255,255,.04); border-radius:30px; }
+.bal-row { display:flex; justify-content:space-between; background:rgba(0,0,0,.25); border-radius:20px; padding:14px 18px; margin-bottom:16px; font-size:.8rem; border:1px solid rgba(255,255,255,.03); }
+.bal-row span { color:#6a7a5a; }
+.bal-row strong { color:#d4af37; font-weight:800; }
+.section { background:rgba(0,0,0,.2); border-radius:24px; padding:16px; margin-bottom:14px; border:1px solid rgba(255,255,255,.03); }
+.section h2 { color:#6a7a5a; font-size:.65rem; text-transform:uppercase; letter-spacing:2px; margin-bottom:12px; font-weight:700; }
+.grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+@media(min-width:480px){ .grid { grid-template-columns:repeat(3,1fr); } }
+.item { background:rgba(0,0,0,.28); border-radius:20px; padding:16px 12px; text-align:center; border:1px solid rgba(255,255,255,.03); }
+.item .ic { font-size:2.5rem; display:block; line-height:1; }
+.item .nm { color:#e8e0d0; font-size:.8rem; font-weight:700; margin-top:6px; }
+.item .cost { color:#d4af37; font-size:.75rem; margin:6px 0; font-weight:700; }
+.item .stk { color:#6a7a5a; font-size:.6rem; margin-bottom:10px; }
+.btn { background:linear-gradient(135deg,#d4af37,#b8960f); border:none; color:#0a120a; font-weight:800; padding:12px 16px; border-radius:30px; font-size:.8rem; cursor:pointer; width:100%; min-height:44px; }
+.btn:disabled { opacity:.35; cursor:not-allowed; }
+.btn:active:not(:disabled) { transform:scale(.96); }
+.nav { position:fixed; left:0; right:0; bottom:0; display:flex; justify-content:space-around; background:rgba(14,22,16,.98); backdrop-filter:blur(20px); border-top:1px solid rgba(212,175,55,.1); padding:8px 4px calc(8px + env(safe-area-inset-bottom)); z-index:1000; max-width:640px; margin:0 auto; }
+.nav a { display:flex; flex-direction:column; align-items:center; padding:8px 12px; border-radius:16px; text-decoration:none; color:#6a7a5a; font-size:.55rem; font-weight:600; min-width:60px; gap:3px; }
+.nav a .ni { font-size:1.5rem; line-height:1; }
+.nav a.active { color:#d4af37; background:rgba(212,175,55,.08); }
+</style>
+</head>
+<body>
+<div class="page">
+    <div class="header">
+        <h1>🏪 Market</h1>
+        <a href="index.html" class="back">← Back</a>
+    </div>
+
+    <div class="bal-row">
+        <span>💰 <strong id="bal">0</strong> G</span>
+        <span>🌾 <strong id="wheat">0</strong></span>
+        <span>🐄 <strong id="animals">0</strong></span>
+    </div>
+
+    <div class="section">
+        <h2>🐄 Buy Animals</h2>
+        <div class="grid">
+            <div class="item">
+                <span class="ic">🐑</span>
+                <div class="nm">Sheep</div>
+                <div class="cost" id="costSheep">💰 30</div>
+                <div class="stk">Owned: <span id="ownSheep">0</span></div>
+                <button class="btn" onclick="buy('sheep')">Buy</button>
+            </div>
+            <div class="item">
+                <span class="ic">🐐</span>
+                <div class="nm">Goat</div>
+                <div class="cost" id="costGoat">💰 45</div>
+                <div class="stk">Owned: <span id="ownGoat">0</span></div>
+                <button class="btn" onclick="buy('goat')">Buy</button>
+            </div>
+            <div class="item">
+                <span class="ic">🐄</span>
+                <div class="nm">Cow</div>
+                <div class="cost" id="costCow">💰 80</div>
+                <div class="stk">Owned: <span id="ownCow">0</span></div>
+                <button class="btn" onclick="buy('cow')">Buy</button>
+            </div>
+            <div class="item">
+                <span class="ic">🐔</span>
+                <div class="nm">Hen</div>
+                <div class="cost" id="costHen">💰 25</div>
+                <div class="stk">Owned: <span id="ownHen">0</span></div>
+                <button class="btn" onclick="buy('hen')">Buy</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🌾 Farm Upgrades</h2>
+        <div class="grid">
+            <div class="item">
+                <span class="ic">🧑‍🌾</span>
+                <div class="nm">Land</div>
+                <div class="cost" id="costLand">💰 50</div>
+                <div class="stk">Owned: <span id="ownLand">0</span>/10</div>
+                <button class="btn" onclick="buyLand()">Buy</button>
+            </div>
+            <div class="item">
+                <span class="ic">🌱</span>
+                <div class="nm">Seed Level</div>
+                <div class="cost" id="costSeed">💰 20</div>
+                <div class="stk">Level: <span id="ownSeed">0</span></div>
+                <button class="btn" onclick="buySeed()">Buy</button>
+            </div>
+            <div class="item">
+                <span class="ic">💧</span>
+                <div class="nm">Irrigation</div>
+                <div class="cost" id="costIrr">💰 60</div>
+                <div class="stk">Level: <span id="ownIrr">0</span></div>
+                <button class="btn" onclick="buyIrr()">Buy</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<nav class="nav">
+    <a href="index.html"><span class="ni">📊</span>Home</a>
+    <a href="market.html" class="active"><span class="ni">🏪</span>Market</a>
+    <a href="upgrades.html"><span class="ni">⚙️</span>Upgrade</a>
+    <a href="index.html" onclick="event.preventDefault();location.href='index.html#leader';"><span class="ni">🏆</span>Rank</a>
+</nav>
+
+<script>
+const API = '/api';
+let userId = null, state = null;
+
+async function call(ep, m='GET', d=null) {
+    const o = { method:m, headers:{'Content-Type':'application/json'} };
+    if (d) o.body = JSON.stringify(d);
+    const r = await fetch(API + ep, o);
+    return await r.json();
+}
+
+function auth() {
+    const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+    const user = tgUser || { id: 900000 + Math.floor(Math.random()*99999), first_name:'TestFarmer', username:'test', photo_url:'' };
+    const deviceId = localStorage.getItem('gebere_device_id') || (() => {
+        const id = 'dev_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2,8);
+        localStorage.setItem('gebere_device_id', id);
+        return id;
+    })();
+    return { user, deviceId };
+}
+
+const ANIMALS = { sheep:{b:30,m:8}, goat:{b:45,m:10}, cow:{b:80,m:15}, hen:{b:25,m:6} };
+
+function costs() {
+    return {
+        sheep: Math.floor(ANIMALS.sheep.b + (state.sheep||0)*ANIMALS.sheep.m),
+        goat: Math.floor(ANIMALS.goat.b + (state.goat||0)*ANIMALS.goat.m),
+        cow: Math.floor(ANIMALS.cow.b + (state.cow||0)*ANIMALS.cow.m),
+        hen: Math.floor(ANIMALS.hen.b + (state.hen||0)*ANIMALS.hen.m),
+        land: Math.floor(50 + (state.land||0)*30),
+        seed: Math.floor(20 + (state.seedLevel||0)*12),
+        irr: Math.floor(60 + (state.irrigationLevel||0)*45)
+    };
+}
+
+function updateUI() {
+    if (!state) return;
+    const c = costs();
+    document.getElementById('bal').textContent = Math.floor(state.coins || 0);
+    document.getElementById('wheat').textContent = Math.floor(state.wheat || 0);
+    document.getElementById('animals').textContent = (state.sheep||0)+(state.goat||0)+(state.cow||0)+(state.hen||0);
+
+    document.getElementById('costSheep').textContent = '💰 ' + c.sheep;
+    document.getElementById('costGoat').textContent = '💰 ' + c.goat;
+    document.getElementById('costCow').textContent = '💰 ' + c.cow;
+    document.getElementById('costHen').textContent = '💰 ' + c.hen;
+    document.getElementById('costLand').textContent = '💰 ' + c.land;
+    document.getElementById('costSeed').textContent = '💰 ' + c.seed;
+    document.getElementById('costIrr').textContent = '💰 ' + c.irr;
+
+    document.getElementById('ownSheep').textContent = state.sheep || 0;
+    document.getElementById('ownGoat').textContent = state.goat || 0;
+    document.getElementById('ownCow').textContent = state.cow || 0;
+    document.getElementById('ownHen').textContent = state.hen || 0;
+    document.getElementById('ownLand').textContent = state.land || 0;
+    document.getElementById('ownSeed').textContent = state.seedLevel || 0;
+    document.getElementById('ownIrr').textContent = state.irrigationLevel || 0;
+}
+
+async function buy(type) {
+    try {
+        const r = await call('/state/' + userId + '/buy-animal', 'POST', { type });
+        if (!r.success) throw new Error(r.error);
+        state = r.data; updateUI();
+    } catch (e) { alert(e.message); }
+}
+async function buyLand() {
+    try { const r = await call('/state/' + userId + '/buy-land','POST'); if(!r.success) throw new Error(r.error); state = r.data; updateUI(); } catch(e){ alert(e.message); }
+}
+async function buySeed() {
+    try { const r = await call('/state/' + userId + '/buy-seed','POST'); if(!r.success) throw new Error(r.error); state = r.data; updateUI(); } catch(e){ alert(e.message); }
+}
+async function buyIrr() {
+    try { const r = await call('/state/' + userId + '/buy-irrigation','POST'); if(!r.success) throw new Error(r.error); state = r.data; updateUI(); } catch(e){ alert(e.message); }
+}
+
+async function init() {
+    const { user, deviceId } = auth();
+    const r = await call('/auth/telegram', 'POST', { tgUser: user, deviceId });
+    if (!r.verified) { alert(r.message); return; }
+    userId = r.userId;
+    state = r.state;
+    updateUI();
+    setInterval(async () => {
+        const s = await call('/state/' + userId);
+        state = s.data;
+        updateUI();
+    }, 3000);
+}
+
+init();
+</script>
+</body>
+</html>
