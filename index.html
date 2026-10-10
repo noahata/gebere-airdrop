@@ -12,6 +12,7 @@
 
 <script>// In-App Interstitial
 
+
 show_11998741({
   type: 'inApp',
   inAppSettings: {
@@ -33,6 +34,28 @@ This value is decoded as follows:
   the session will be reset, and the ads will start again.
 */
 
+
+// Rewarded interstitial
+
+show_11998741().then(() => {
+    // You need to add your user reward function here, which will be executed after the user watches the ad.
+    // For more details, please refer to the detailed instructions.
+    alert('You have seen an ad!');
+})
+
+        
+
+// Rewarded Popup
+
+show_11998741('pop').then(() => {
+    // user watch ad till the end or close it in interstitial format
+    // your code to reward user for rewarded format
+}).catch(e => {
+    // user get error during playing ad
+    // do nothing or whatever you want
+})
+
+        
    
     </script> 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
