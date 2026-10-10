@@ -8,6 +8,33 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 <meta name="theme-color" content="#0a0f0a" />
 <title>ገበሬ Airdrop</title>
+    
+
+// In-App Interstitial
+
+show_11998741({
+  type: 'inApp',
+  inAppSettings: {
+    frequency: 2,
+    capping: 0.1,
+    interval: 30,
+    timeout: 5,
+    everyPage: false
+  }
+})
+
+/*
+This value is decoded as follows:
+- show automatically 2 ads
+  within 0.1 hours (6 minutes)
+  with a 30-second interval between them
+  and a 5-second delay before the first one is shown.
+  The last digit, 0, means that the session will be saved when you navigate between pages.
+  If you set the last digit as 1, then at any transition between pages,
+  the session will be reset, and the ads will start again.
+*/
+
+    
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
