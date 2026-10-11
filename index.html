@@ -15,7 +15,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 <meta name="theme-color" content="#0a0f0a" />
 <title>ገበሬ Airdrop</title>
-    
+  <script>
+let hasShownLaunchAd = false;
+
+function onAppLaunch() {
+  if (!hasShownLaunchAd) {
+    hasShownLaunchAd = true;
+    showAd(); // Your AdController.show() function
+  }
+}
+// Show an ad every 60 seconds
+setInterval(() => {
+  showAd();
+}, 60000); // 60000ms = 60 seconds
+</script>   
 
 <script>// In-App Interstitial
 
