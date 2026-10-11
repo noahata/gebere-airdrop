@@ -1,92 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-    <script>
-        const AdController = window.Adsgram.init({ 
-    blockId: "int-53297" 
-});
-    </script>
-    
-    
-    <meta name="sheba-ads-verify" content="6f453e9bb719bc28d7c913b3d3072bb5">
-<script async src="https://shebaads.com/site-verify?t=6f453e9bb719bc28d7c913b3d3072bb5"></script>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 <meta name="theme-color" content="#0a0f0a" />
+<meta name="sheba-ads-verify" content="6f453e9bb719bc28d7c913b3d3072bb5">
 <title>ገበሬ Airdrop</title>
-  <script>
-let hasShownLaunchAd = false;
 
-function onAppLaunch() {
-  if (!hasShownLaunchAd) {
-    hasShownLaunchAd = true;
-    showAd(); // Your AdController.show() function
-  }
-}
-// Show an ad every 60 seconds
-setInterval(() => {
-  showAd();
-}, 60000); // 60000ms = 60 seconds
-</script>   
-
-<script>// In-App Interstitial
-
-
-show_11998741({
-  type: 'inApp',
-  inAppSettings: {
-    frequency: 2,
-    capping: 0.1,
-    interval: 30,
-    timeout: 5,
-    everyPage: false
-  }
-})
-/*
-This value is decoded as follows:
-- show automatically 2 ads
-  within 0.1 hours (6 minutes)
-  with a 30-second interval between them
-  and a 5-second delay before the first one is shown.
-  The last digit, 0, means that the session will be saved when you navigate between pages.
-  If you set the last digit as 1, then at any transition between pages,
-  the session will be reset, and the ads will start again.
-*/
-
-
-// Rewarded interstitial
-
-show_11998741().then(() => {
-    // You need to add your user reward function here, which will be executed after the user watches the ad.
-    // For more details, please refer to the detailed instructions.
-    alert('You have seen an ad!');
-})
-
-        
-
-// Rewarded Popup
-
-show_11998741('pop').then(() => {
-    // user watch ad till the end or close it in interstitial format
-    // your code to reward user for rewarded format
-}).catch(e => {
-    // user get error during playing ad
-    // do nothing or whatever you want
-})
-
-        
-   
-    </script> 
+<!-- Telegram WebApp SDK -->
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<!-- Adsgram SDK (rewarded) -->
+<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
 <style>
 * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; -webkit-tap-highlight-color:transparent; }
 html, body { width:100%; min-height:100vh; }
 body { background:#0a0f0a; color:#e8e0d0; padding:0; overflow-x:hidden; }
 body.no-scroll { overflow:hidden; position:fixed; width:100%; }
 
-/* Full-width mobile layout */
 .page { width:100%; max-width:640px; margin:0 auto; padding:16px 14px calc(80px + env(safe-area-inset-bottom)); }
 
 /* Loading */
@@ -111,7 +45,7 @@ body.no-scroll { overflow:hidden; position:fixed; width:100%; }
 .modal-desc { color:#aabb8a; font-size:.9rem; line-height:1.55; margin-bottom:20px; }
 .modal-btn { background:linear-gradient(135deg,#d4af37,#b8960f); border:none; color:#0a120a; font-weight:700; padding:14px; border-radius:60px; width:100%; cursor:pointer; font-size:.95rem; }
 
-/* App container */
+/* App */
 #app { display:none; }
 #app.visible { display:block; }
 
@@ -148,7 +82,7 @@ body.no-scroll { overflow:hidden; position:fixed; width:100%; }
 .bal-sub span { color:#aabb8a; }
 .bal-sub .hi { color:#d4af37; font-weight:700; }
 
-/* Claim card */
+/* Claim / generic card */
 .claim-card { background:linear-gradient(145deg,rgba(212,175,55,.06),rgba(212,175,55,.01)); border-radius:24px; padding:18px 16px; margin-bottom:16px; border:1px solid rgba(212,175,55,.1); }
 .claim-lbl { color:#6a7a5a; font-size:.65rem; text-transform:uppercase; letter-spacing:2px; font-weight:700; text-align:center; }
 .claim-amt { font-size:2.2rem; font-weight:900; color:#f5e6a0; text-align:center; margin:6px 0 10px; }
@@ -176,7 +110,7 @@ body.no-scroll { overflow:hidden; position:fixed; width:100%; }
 .animal .lb { color:#6a7a5a; font-size:.55rem; text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
 .animal .ea { color:#aabb8a; font-size:.6rem; margin-top:4px; font-weight:600; }
 
-/* Nav - fixed at bottom */
+/* Nav */
 .nav { position:fixed; left:0; right:0; bottom:0; display:flex; justify-content:space-around; background:rgba(14,22,16,.98); backdrop-filter:blur(20px); border-top:1px solid rgba(212,175,55,.1); padding:8px 4px calc(8px + env(safe-area-inset-bottom)); z-index:1000; max-width:640px; margin:0 auto; }
 .nav a { display:flex; flex-direction:column; align-items:center; padding:8px 12px; border-radius:16px; text-decoration:none; color:#6a7a5a; font-size:.55rem; font-weight:600; min-width:60px; gap:3px; }
 .nav a .ni { font-size:1.5rem; line-height:1; }
@@ -218,7 +152,168 @@ body.no-scroll { overflow:hidden; position:fixed; width:100%; }
 </style>
 </head>
 <body>
-<script src="https://pl31763145.profitableratecpmnetwork.com/41/79/a8/4179a8df68801b1d5b993be6fb9d58a2.js"></script>
+
+<!-- ============================================================
+     AD MANAGER (lazy, staggered, rotates 6 networks)
+     ============================================================ -->
+<script>
+const AdManager = (() => {
+  const state = {
+    adsgramReady: false,
+    monetagReady: false,
+    loading: new Set(),
+    lastShown: {},
+    dailyCount: {},
+    inProgress: false,
+  };
+
+  const CAPS = {
+    adsgram: { perDay: 20, cooldown: 30000,  weight: 3 },
+    monetag: { perDay: 15, cooldown: 45000,  weight: 2 },
+    sheba1:  { perDay: 10, cooldown: 60000,  weight: 1 },
+    sheba2:  { perDay: 10, cooldown: 60000,  weight: 1 },
+    sheba3:  { perDay: 10, cooldown: 60000,  weight: 1 },
+  };
+
+  const today = () => new Date().toISOString().slice(0,10);
+
+  function canShow(net) {
+    const c = CAPS[net];
+    const d = state.dailyCount[net];
+    if (!d || d.date !== today()) return true;
+    if (d.count >= c.perDay) return false;
+    return (Date.now() - (state.lastShown[net] || 0)) >= c.cooldown;
+  }
+  function record(net) {
+    const tk = today();
+    if (!state.dailyCount[net] || state.dailyCount[net].date !== tk)
+      state.dailyCount[net] = { date: tk, count: 0 };
+    state.dailyCount[net].count++;
+    state.lastShown[net] = Date.now();
+    try { localStorage.setItem('ad_state', JSON.stringify({
+      dailyCount: state.dailyCount, lastShown: state.lastShown
+    })); } catch {}
+  }
+  function restore() {
+    try {
+      const p = JSON.parse(localStorage.getItem('ad_state') || '{}');
+      if (p.dailyCount && Object.values(p.dailyCount)[0]?.date === today())
+        state.dailyCount = p.dailyCount;
+      state.lastShown = p.lastShown || {};
+    } catch {}
+  }
+
+  function loadAdsgram() {
+    if (state.adsgramReady) return;
+    try {
+      window.AdController = window.Adsgram.init({ blockId: 'int-53297' });
+      state.adsgramReady = true;
+    } catch (e) { console.warn('Adsgram init failed', e); }
+  }
+  function loadMonetag() {
+    if (state.monetagReady || state.loading.has('monetag')) return;
+    state.loading.add('monetag');
+    const s = document.createElement('script');
+    s.src = '//libtl.com/sdk.js';
+    s.dataset.zone = '11998741';
+    s.dataset.sdk  = 'show_11998741';
+    s.async = true;
+    s.onload = () => { state.monetagReady = true; state.loading.delete('monetag'); };
+    s.onerror = () => state.loading.delete('monetag');
+    document.head.appendChild(s);
+  }
+  function loadSheba(i) {
+    const urls = [
+      'https://shebaads.com/ad.js?placement=shb_06432b07b9e202ba9a6dd5a86a3390c6',
+      'https://shebaads.com/ad.js?placement=shb_f2e47d7583eac512cb49134ed9fd9c77',
+      'https://shebaads.com/ad.js?placement=shb_1f8e1503fbed8c468fa120f39699aaf6',
+    ];
+    if (state.loading.has('sheba'+i)) return;
+    state.loading.add('sheba'+i);
+    const s = document.createElement('script');
+    s.src = urls[i-1]; s.async = true;
+    s.onload = () => state.loading.delete('sheba'+i);
+    s.onerror = () => state.loading.delete('sheba'+i);
+    document.head.appendChild(s);
+  }
+
+  function showOne(net) {
+    return new Promise((resolve, reject) => {
+      const t = setTimeout(() => reject(new Error('timeout')), 20000);
+      const done = (ok) => { clearTimeout(t); ok ? resolve() : reject(new Error('closed')); };
+
+      if (net === 'adsgram') {
+        loadAdsgram();
+        if (!window.AdController) return done(false);
+        window.AdController.show().then(() => done(true)).catch(() => done(false));
+      }
+      else if (net === 'monetag') {
+        loadMonetag();
+        let waited = 0;
+        const iv = setInterval(() => {
+          if (typeof window.show_11998741 === 'function') {
+            clearInterval(iv);
+            window.show_11998741('pop')
+              .then(() => done(true))
+              .catch(() => done(false));
+          }
+          if ((waited += 200) > 8000) { clearInterval(iv); done(false); }
+        }, 200);
+      }
+      else {
+        // Sheba rewarded not exposed via JS API in your setup — skip
+        done(false);
+      }
+    });
+  }
+
+  async function showRewarded() {
+    if (state.inProgress) throw new Error('Ad already playing');
+    state.inProgress = true;
+
+    const order = ['adsgram','monetag','sheba1','sheba2','sheba3']
+      .filter(canShow)
+      .sort((a,b) => CAPS[b].weight - CAPS[a].weight);
+
+    for (const net of order) {
+      try {
+        await showOne(net);
+        record(net);
+        state.inProgress = false;
+        return true;
+      } catch (e) {
+        console.warn('Ad failed:', net, e.message);
+        continue;
+      }
+    }
+    state.inProgress = false;
+    throw new Error('No ads available. Try again later.');
+  }
+
+  function backgroundLoad() {
+    // Stagger loading so 6 tags don't fire at once
+    setTimeout(loadAdsgram, 500);
+    setTimeout(loadMonetag, 2000);
+    setTimeout(() => loadSheba(1), 3500);
+    setTimeout(() => loadSheba(2), 5000);
+    setTimeout(() => loadSheba(3), 6500);
+    // AdSense — lazy banner only
+    setTimeout(() => {
+      const s = document.createElement('script');
+      s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6955112758253196';
+      s.async = true; s.crossOrigin = 'anonymous';
+      document.head.appendChild(s);
+    }, 8000);
+  }
+
+  restore();
+  return { showRewarded, backgroundLoad, canShow, state };
+})();
+
+window.addEventListener('load', () => setTimeout(() => AdManager.backgroundLoad(), 1200));
+</script>
+
+<!-- Loading screen -->
 <div id="loading">
     <div class="load-icon">🌾</div>
     <div class="load-title">ገበሬ Airdrop</div>
@@ -228,15 +323,17 @@ body.no-scroll { overflow:hidden; position:fixed; width:100%; }
     <div class="load-brand">⚡ Powered by <span>Ace Spy Games</span></div>
 </div>
 
+<!-- Block modal (VPN / ban / etc) -->
 <div id="modal">
     <div class="modal-box">
-        <div class="modal-icon">🚫</div>
-        <div class="modal-title">Access Denied</div>
+        <div class="modal-icon" id="modalIcon">🚫</div>
+        <div class="modal-title" id="modalTitle">Access Denied</div>
         <div class="modal-desc" id="modalMsg">Multi-account detected.</div>
         <button class="modal-btn" onclick="location.reload()">Try Again</button>
     </div>
 </div>
 
+<!-- End / Telebirr -->
 <div id="endOverlay">
     <div class="end-box">
         <div class="end-title">🎉 AIRDROP ENDED</div>
@@ -247,6 +344,7 @@ body.no-scroll { overflow:hidden; position:fixed; width:100%; }
     </div>
 </div>
 
+<!-- Leaderboard -->
 <div id="leaderModal">
     <div class="leader-box">
         <div class="leader-title">🏆 TOP FARMERS</div>
@@ -255,6 +353,9 @@ body.no-scroll { overflow:hidden; position:fixed; width:100%; }
     </div>
 </div>
 
+<!-- ============================================================
+     MAIN APP
+     ============================================================ -->
 <div id="app" class="page">
     <div class="ann-bar" id="annBar"></div>
 
@@ -288,6 +389,20 @@ body.no-scroll { overflow:hidden; position:fixed; width:100%; }
         </div>
     </div>
 
+    <!-- Watch Ad Card -->
+    <div class="claim-card" style="border-color:rgba(76,175,80,.25);background:linear-gradient(145deg,rgba(76,175,80,.08),rgba(76,175,80,.02));">
+        <div class="claim-lbl">📺 WATCH &amp; EARN</div>
+        <div class="claim-amt" style="color:#8be28b;">+<span id="adReward">5</span> <span class="u">G</span></div>
+        <div style="color:#6a7a5a;font-size:.65rem;text-align:center;margin-bottom:10px;">
+            Watch a short ad · earn instantly
+        </div>
+        <button class="claim-btn" id="watchAdBtn" style="background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff;">
+            📺 WATCH AD
+        </button>
+        <div class="claim-note" id="adStatus">Ready</div>
+    </div>
+
+    <!-- Claim Card -->
     <div class="claim-card">
         <div class="claim-lbl">🪙 PENDING REWARD</div>
         <div class="claim-amt"><span id="pending">0.00</span> <span class="u">G</span></div>
@@ -306,6 +421,7 @@ body.no-scroll { overflow:hidden; position:fixed; width:100%; }
         <div class="claim-note">Earns only while the app is open</div>
     </div>
 
+    <!-- Animals -->
     <div class="animals">
         <div class="animal"><div class="ic">🐑</div><div class="ct" id="cSheep">0</div><div class="lb">Sheep</div><div class="ea" id="eSheep">+0/hr</div></div>
         <div class="animal"><div class="ic">🐐</div><div class="ct" id="cGoat">0</div><div class="lb">Goat</div><div class="ea" id="eGoat">+0/hr</div></div>
@@ -313,11 +429,48 @@ body.no-scroll { overflow:hidden; position:fixed; width:100%; }
         <div class="animal"><div class="ic">🐔</div><div class="ct" id="cHen">0</div><div class="lb">Hen</div><div class="ea" id="eHen">+0/hr</div></div>
     </div>
 
+    <!-- Referral Card -->
+    <div class="claim-card" style="border-color:rgba(100,150,255,.25);background:linear-gradient(145deg,rgba(100,150,255,.08),rgba(100,150,255,.02));">
+        <div class="claim-lbl">👥 INVITE &amp; EARN COINS</div>
+
+        <div class="claim-amt" style="color:#8ab4ff;font-size:1.6rem;">
+            +<span id="refPerFriend">250</span> <span class="u">G</span>
+        </div>
+        <div style="color:#6a7a5a;font-size:.65rem;text-align:center;margin-bottom:12px;">
+            Per friend · +20 G per claim · +5 G per ad
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:12px 0;">
+            <div class="tbox"><div class="lbl">Friends</div><div class="disp" id="refCount" style="font-size:1.1rem;">0</div></div>
+            <div class="tbox"><div class="lbl">Earned</div><div class="disp" id="refEarned" style="font-size:1.1rem;">0</div></div>
+            <div class="tbox"><div class="lbl">Tier</div><div class="disp" id="refTier" style="font-size:.85rem;">🥉 Bronze</div></div>
+        </div>
+
+        <div style="margin:10px 0;">
+            <div style="display:flex;justify-content:space-between;font-size:.6rem;color:#6a7a5a;margin-bottom:4px;">
+                <span id="refNextLabel">Next: 5 friends → +500 G</span>
+                <span id="refNextCount">0/5</span>
+            </div>
+            <div class="load-track" style="width:100%;margin-top:0;">
+                <div class="load-bar" id="refBar" style="width:0%;"></div>
+            </div>
+        </div>
+
+        <input type="text" id="refLink" readonly class="end-input" style="margin-bottom:8px;font-size:.7rem;" />
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <button class="claim-btn" onclick="copyRef()" style="min-height:46px;font-size:.85rem;">📋 COPY</button>
+            <button class="claim-btn" onclick="shareRef()" style="min-height:46px;font-size:.85rem;background:linear-gradient(135deg,#2196f3,#1565c0);color:#fff;">📤 SHARE</button>
+        </div>
+        <div class="claim-note" id="refStatus"></div>
+    </div>
+
     <div class="footer">
         <div class="br">⚡ Powered by <span>Ace Spy Games</span></div>
     </div>
 </div>
 
+<!-- Nav -->
 <nav class="nav">
     <a href="index.html" class="active"><span class="ni">📊</span>Home</a>
     <a href="market.html"><span class="ni">🏪</span>Market</a>
@@ -325,48 +478,103 @@ body.no-scroll { overflow:hidden; position:fixed; width:100%; }
     <a href="#" onclick="openLeader();return false;"><span class="ni">🏆</span>Rank</a>
 </nav>
 
+<!-- ============================================================
+     MAIN LOGIC
+     ============================================================ -->
 <script>
+/* ---------------- Constants ---------------- */
+const API = '/api';
+const BOT_USERNAME = 'YOUR_BOT_USERNAME'; // <-- change me
+
+const REFERRAL = {
+  WELCOME_BONUS: 100,
+  SIGNUP_REWARD: 250,
+  CLAIM_REWARD: 20,
+  AD_REWARD: 5,
+  MILESTONES: [
+    { friends: 5,   coins: 500    },
+    { friends: 10,  coins: 1500   },
+    { friends: 25,  coins: 5000   },
+    { friends: 50,  coins: 15000  },
+    { friends: 100, coins: 40000  },
+    { friends: 250, coins: 120000 },
+  ],
+  TIERS: [
+    { min: 0,   name: '🥉 Bronze'   },
+    { min: 5,   name: '🥈 Silver'   },
+    { min: 10,  name: '🥇 Gold'     },
+    { min: 25,  name: '💠 Platinum' },
+    { min: 50,  name: '💎 Diamond'  },
+    { min: 100, name: '👑 Legend'   },
+  ],
+};
+
+/* ---------------- Telegram init ---------------- */
 const tg = window.Telegram?.WebApp;
 if (tg) { tg.ready(); tg.expand(); tg.setHeaderColor?.('#0a0f0a'); }
 
-const API = '/api';
+/* ---------------- State ---------------- */
 let userId = null;
 let state = null;
 let cfg = { airdropEnded: false };
 let tickTimer = null;
 let lastTick = Date.now();
+let adBusy = false;
 
+/* ---------------- Device ID ---------------- */
 function getDeviceId() {
     let id = localStorage.getItem('gebere_device_id');
     if (!id) {
-        id = 'dev_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 8);
+        id = 'dev_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2,10);
         localStorage.setItem('gebere_device_id', id);
     }
     return id;
 }
 const deviceId = getDeviceId();
 
+/* ---------------- API helper ---------------- */
 async function call(ep, method = 'GET', data = null) {
     const opt = { method, headers: { 'Content-Type': 'application/json' } };
     if (data) opt.body = JSON.stringify(data);
     const r = await fetch(API + ep, opt);
     const j = await r.json();
-    if (!r.ok) throw new Error(j.error || 'Error');
+    if (!r.ok) throw new Error(j.error || j.message || 'Error');
     return j;
 }
 
+/* ---------------- VPN soft signal ---------------- */
+function vpnSoftSignal() {
+    // Timezone check — Ethiopia = Africa/Addis_Ababa
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    return { timezone: tz, lang: navigator.language };
+}
+
+/* ---------------- Auth ---------------- */
 async function authTelegram() {
     const tgUser = tg?.initDataUnsafe?.user;
-    const user = tgUser || {
-        id: 900000 + Math.floor(Math.random() * 99999),
-        first_name: 'TestFarmer',
-        username: 'test',
-        photo_url: ''
-    };
+    if (!tgUser) {
+        // No fake fallback — must open in Telegram
+        document.getElementById('modalIcon').textContent = '📱';
+        document.getElementById('modalTitle').textContent = 'Open in Telegram';
+        document.getElementById('modalMsg').textContent =
+            'Please open this app inside Telegram to play.';
+        document.getElementById('modal').classList.add('active');
+        return null;
+    }
+
+    const startParam = tg?.initDataUnsafe?.start_param || null;
+
     try {
-        const r = await call('/auth/telegram', 'POST', { tgUser: user, deviceId });
+        const r = await call('/auth/telegram', 'POST', {
+            tgUser,
+            deviceId,
+            startParam,
+            vpnSignal: vpnSoftSignal(),
+        });
         if (!r.verified) {
-            document.getElementById('modalMsg').textContent = r.message || 'Access denied';
+            document.getElementById('modalIcon').textContent = r.vpn ? '🌐' : '🚫';
+            document.getElementById('modalTitle').textContent = r.vpn ? 'VPN Detected' : 'Access Denied';
+            document.getElementById('modalMsg').textContent = r.message || 'Access denied.';
             document.getElementById('modal').classList.add('active');
             return null;
         }
@@ -374,12 +582,13 @@ async function authTelegram() {
         state = r.state;
         return r;
     } catch (e) {
-        document.getElementById('modalMsg').textContent = 'Login failed';
+        document.getElementById('modalMsg').textContent = e.message || 'Login failed';
         document.getElementById('modal').classList.add('active');
         return null;
     }
 }
 
+/* ---------------- Config + Announcement ---------------- */
 async function loadCfg() {
     try {
         const r = await call('/config/public');
@@ -387,7 +596,6 @@ async function loadCfg() {
         if (cfg.airdropEnded) showEnd();
     } catch {}
 }
-
 async function loadAnn() {
     try {
         const r = await call('/announcement');
@@ -401,6 +609,7 @@ async function loadAnn() {
     } catch {}
 }
 
+/* ---------------- Save / Tick ---------------- */
 async function saveState() {
     if (!userId || !state) return;
     try { await call('/state/' + userId, 'POST', { state }); } catch {}
@@ -413,7 +622,7 @@ function startTick() {
         const now = Date.now();
         const elapsed = (now - lastTick) / 1000;
         lastTick = now;
-        if (elapsed < 0.5 || elapsed > 3) return;
+        if (elapsed < 0.5 || elapsed > 5) return;
         try {
             const r = await call('/state/' + userId + '/tick', 'POST', { elapsedSeconds: elapsed });
             if (r.success) {
@@ -421,7 +630,7 @@ function startTick() {
                 updateUI();
             }
         } catch {}
-    }, 1000);
+    }, 3000); // batch every 3s instead of 1s
 }
 function stopTick() { if (tickTimer) clearInterval(tickTimer); tickTimer = null; }
 
@@ -430,6 +639,7 @@ document.addEventListener('visibilitychange', () => {
     else if (userId) startTick();
 });
 
+/* ---------------- Claim ---------------- */
 async function claim() {
     try {
         const r = await call('/state/' + userId + '/claim', 'POST', { claimCooldown: state.claimCooldown });
@@ -438,10 +648,129 @@ async function claim() {
             state.pendingCoins = 0;
             state.lastClaimTime = Date.now();
             updateUI();
+            loadReferral(); // refresh referrer earnings if any
         }
     } catch (e) { alert(e.message); }
 }
 
+/* ---------------- Watch Ad ---------------- */
+function currentAdReward() {
+    const rate  = (state?.coins || 0) * 0.001;
+    const bonus = 1 + (state?.upgrades?.coinBoost || 0) * 0.1;
+    return Math.max(REFERRAL.AD_REWARD, Math.floor((REFERRAL.AD_REWARD + rate) * bonus));
+}
+
+async function watchAd() {
+    if (adBusy) return;
+    adBusy = true;
+
+    const btn = document.getElementById('watchAdBtn');
+    const st  = document.getElementById('adStatus');
+    btn.disabled = true;
+    btn.textContent = '⏳ LOADING AD…';
+    st.textContent = 'Please wait…';
+
+    try {
+        await AdManager.showRewarded();
+        const reward = currentAdReward();
+        const r = await call('/state/' + userId + '/ad-reward', 'POST', { reward });
+        if (r.success) {
+            state.coins = r.newBalance;
+            state.adsWatched = (state.adsWatched || 0) + 1;
+            updateUI();
+            st.textContent = `✅ +${reward} G credited`;
+            loadReferral();
+        } else {
+            st.textContent = '⚠️ Reward failed';
+        }
+    } catch (e) {
+        st.textContent = '❌ ' + e.message;
+    } finally {
+        adBusy = false;
+        btn.disabled = false;
+        btn.textContent = '📺 WATCH AD';
+        document.getElementById('adReward').textContent = currentAdReward();
+    }
+}
+
+/* ---------------- Referral ---------------- */
+function getReferralLink() {
+    return `https://t.me/${BOT_USERNAME}?start=ref_${userId}`;
+}
+function tierFor(n) {
+    let t = REFERRAL.TIERS[0];
+    for (const x of REFERRAL.TIERS) if (n >= x.min) t = x;
+    return t.name;
+}
+function nextMilestone(n) {
+    return REFERRAL.MILESTONES.find(m => n < m.friends) || null;
+}
+
+async function loadReferral() {
+    try {
+        const r = await call('/referral/' + userId);
+        const d = r.data || {};
+        const friends = d.referred || 0;
+
+        document.getElementById('refLink').value = getReferralLink();
+        document.getElementById('refPerFriend').textContent = REFERRAL.SIGNUP_REWARD;
+        document.getElementById('refCount').textContent = friends;
+        document.getElementById('refEarned').textContent = Math.floor(d.earned || 0);
+        document.getElementById('refTier').textContent = tierFor(friends);
+
+        const next = nextMilestone(friends);
+        const bar = document.getElementById('refBar');
+        const lbl = document.getElementById('refNextLabel');
+        const cnt = document.getElementById('refNextCount');
+
+        if (next) {
+            const idx = REFERRAL.MILESTONES.indexOf(next);
+            const prev = idx > 0 ? REFERRAL.MILESTONES[idx-1].friends : 0;
+            const done = friends - prev;
+            const need = next.friends - prev;
+            bar.style.width = Math.min(100, (done / need) * 100) + '%';
+            lbl.textContent = `Next: ${next.friends} friends → +${next.coins.toLocaleString()} G`;
+            cnt.textContent = `${friends}/${next.friends}`;
+        } else {
+            bar.style.width = '100%';
+            lbl.textContent = '👑 All milestones unlocked!';
+            cnt.textContent = `${friends}`;
+        }
+    } catch (e) { console.warn('ref load', e); }
+}
+
+async function copyRef() {
+    const link = getReferralLink();
+    try {
+        await navigator.clipboard.writeText(link);
+        flash('✅ Link copied!');
+    } catch {
+        const i = document.getElementById('refLink');
+        i.select(); i.setSelectionRange(0, 99999);
+        document.execCommand('copy');
+        flash('✅ Link copied!');
+    }
+}
+function shareRef() {
+    const link = getReferralLink();
+    const text = '🌾 Join ገበሬ Airdrop and earn coins!';
+    if (tg?.openTelegramLink) {
+        tg.openTelegramLink(
+            `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`
+        );
+    } else if (navigator.share) {
+        navigator.share({ title: 'ገበሬ Airdrop', text, url: link });
+    } else {
+        copyRef();
+    }
+}
+function flash(msg) {
+    const el = document.getElementById('refStatus');
+    el.textContent = msg;
+    setTimeout(() => el.textContent = '', 2500);
+}
+
+/* ---------------- UI Update ---------------- */
 function fmt(ms) {
     if (ms <= 0) return '00:00:00';
     const h = Math.floor(ms / 3600000);
@@ -458,9 +787,9 @@ function updateUI() {
     document.getElementById('pending').textContent = (state.pendingCoins || 0).toFixed(2);
 
     const sheep = (state.sheep || 0) * 0.03;
-    const goat = (state.goat || 0) * 0.05;
-    const cow = (state.cow || 0) * 0.12;
-    const hen = (state.hen || 0) * 0.02;
+    const goat  = (state.goat  || 0) * 0.05;
+    const cow   = (state.cow   || 0) * 0.12;
+    const hen   = (state.hen   || 0) * 0.02;
     let rate = sheep + goat + cow + hen;
     rate *= 1 + (state.upgrades?.coinBoost || 0) * 0.05;
 
@@ -468,16 +797,16 @@ function updateUI() {
     document.getElementById('perhour').textContent = (rate * 3600).toFixed(0);
 
     document.getElementById('cSheep').textContent = state.sheep || 0;
-    document.getElementById('cGoat').textContent = state.goat || 0;
-    document.getElementById('cCow').textContent = state.cow || 0;
-    document.getElementById('cHen').textContent = state.hen || 0;
+    document.getElementById('cGoat').textContent  = state.goat  || 0;
+    document.getElementById('cCow').textContent   = state.cow   || 0;
+    document.getElementById('cHen').textContent   = state.hen   || 0;
     document.getElementById('eSheep').textContent = '+' + (sheep * 3600).toFixed(0) + '/hr';
-    document.getElementById('eGoat').textContent = '+' + (goat * 3600).toFixed(0) + '/hr';
-    document.getElementById('eCow').textContent = '+' + (cow * 3600).toFixed(0) + '/hr';
-    document.getElementById('eHen').textContent = '+' + (hen * 3600).toFixed(0) + '/hr';
+    document.getElementById('eGoat').textContent  = '+' + (goat  * 3600).toFixed(0) + '/hr';
+    document.getElementById('eCow').textContent   = '+' + (cow   * 3600).toFixed(0) + '/hr';
+    document.getElementById('eHen').textContent   = '+' + (hen   * 3600).toFixed(0) + '/hr';
 
     document.getElementById('uname').textContent = state.userName || 'Farmer';
-    document.getElementById('uid').textContent = '#' + (userId || '').slice(-6);
+    document.getElementById('uid').textContent = '#' + String(userId || '').slice(-6);
     const av = document.getElementById('avatar');
     if (state.avatar) av.innerHTML = `<img src="${state.avatar}">`;
     else av.textContent = (state.userName || 'F')[0].toUpperCase();
@@ -501,8 +830,11 @@ function updateUI() {
     const can = rC <= 0 && rW > 0 && (state.pendingCoins || 0) > 0;
     btn.disabled = !can;
     btn.textContent = can ? '🚀 CLAIM NOW' : (rW <= 0 ? '⏳ EXPIRED' : '⏳ WAIT');
+
+    document.getElementById('adReward').textContent = currentAdReward();
 }
 
+/* ---------------- End / Telebirr ---------------- */
 function showEnd() {
     document.getElementById('endOverlay').classList.add('active');
     if (state && state.claimed) {
@@ -513,7 +845,6 @@ function showEnd() {
             `Enter your Telebirr account to receive payment.`;
     }
 }
-
 async function submitTelebirr() {
     const account = document.getElementById('tAccount').value.trim();
     const name = document.getElementById('tName').value.trim();
@@ -524,23 +855,28 @@ async function submitTelebirr() {
     } catch (e) { alert(e.message); }
 }
 
+/* ---------------- Leaderboard ---------------- */
 async function openLeader() {
     try {
         const r = await call('/leaderboard');
         const list = document.getElementById('leaderList');
-        if (!r.data.length) list.innerHTML = '<div style="text-align:center;color:#6a7a5a;padding:20px;">No players yet</div>';
-        else list.innerHTML = r.data.slice(0, 30).map((u, i) => `
-            <div class="rank-item ${i < 3 ? 'top-' + (i+1) : ''}">
-                <span class="rank-n">#${i+1}</span>
-                <span class="rank-nm">${u.userName}</span>
-                <span class="rank-c">${u.coins.toLocaleString()} G</span>
-            </div>
-        `).join('');
+        if (!r.data.length) {
+            list.innerHTML = '<div style="text-align:center;color:#6a7a5a;padding:20px;">No players yet</div>';
+        } else {
+            list.innerHTML = r.data.slice(0, 30).map((u, i) => `
+                <div class="rank-item ${i < 3 ? 'top-' + (i+1) : ''}">
+                    <span class="rank-n">#${i+1}</span>
+                    <span class="rank-nm">${u.userName}</span>
+                    <span class="rank-c">${Number(u.coins).toLocaleString()} G</span>
+                </div>
+            `).join('');
+        }
         document.getElementById('leaderModal').classList.add('active');
         document.body.classList.add('no-scroll');
     } catch {}
 }
 
+/* ---------------- Loading bar ---------------- */
 function runLoading() {
     return new Promise((res) => {
         const bar = document.getElementById('loadBar');
@@ -563,14 +899,19 @@ function runLoading() {
     });
 }
 
+/* ---------------- Init ---------------- */
 async function init() {
     const auth = await authTelegram();
-    if (!auth) { await runLoading(); return; }
+    if (!auth) { return; } // leave modal up, do nothing
+
     await loadCfg();
     await loadAnn();
     await runLoading();
 
+    // Wire buttons
     document.getElementById('claimBtn').addEventListener('click', claim);
+    document.getElementById('watchAdBtn').addEventListener('click', watchAd);
+
     document.querySelectorAll('.cd-btn').forEach(b => {
         b.addEventListener('click', function() {
             const h = parseInt(this.dataset.h);
@@ -585,19 +926,15 @@ async function init() {
 
     if (!document.hidden) startTick();
     setInterval(updateUI, 1000);
-    setInterval(() => { loadAnn(); loadCfg(); }, 15000);
+    setInterval(() => { loadAnn(); loadCfg(); loadReferral(); }, 15000);
     setInterval(() => { if (!document.hidden) saveState(); }, 10000);
 
     updateUI();
+    await loadReferral();
     if (cfg.airdropEnded) showEnd();
 }
 
 init();
 </script>
-    <script async src="https://shebaads.com/ad.js?placement=shb_06432b07b9e202ba9a6dd5a86a3390c6"></script>
-    <script async src="https://shebaads.com/ad.js?placement=shb_f2e47d7583eac512cb49134ed9fd9c77"></script>
-    <script async src="https://shebaads.com/ad.js?placement=shb_1f8e1503fbed8c468fa120f39699aaf6"></script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6955112758253196"
-     crossorigin="anonymous"></script>
 </body>
 </html>
