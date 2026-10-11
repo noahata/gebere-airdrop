@@ -1,6 +1,7 @@
 /**
- * ገበሬ Airdrop - Server v5.1
- * No auto-earn · Mobile-first · Telegram Bot
+ * ገበሬ Airdrop - Server v7.0
+ * Ads: AdsGram (primary) + Monetag (fallback) + ShebaAds (auto)
+ * 30s cooldown · First-load ad
  */
 
 const express = require('express');
@@ -21,6 +22,8 @@ const CONFIG_FILE = path.join(DATA_DIR, 'config.json');
 const ADMIN_USER = process.env.ADMIN_USER || 'admin';
 const ADMIN_PASS = process.env.ADMIN_PASS || 'gebere2024';
 const BOT_TOKEN = process.env.BOT_TOKEN || '';
+const BOT_USERNAME = process.env.BOT_USERNAME || 'YourBotUsername';
+const WEBAPP_URL = process.env.WEBAPP_URL || 'https://your-app.onrender.com';
 
 app.set('trust proxy', true);
 app.use(cors());
@@ -29,14 +32,67 @@ app.use(express.static(ROOT));
 
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
+// ===== TELEGRAM BOT =====
 let bot = null;
 if (BOT_TOKEN) {
     try {
-        bot = new TelegramBot(BOT_TOKEN, { polling: false });
-        console.log('✅ Bot initialized');
+        bot = new TelegramBot(BOT_TOKEN, { polling: true });
+        console.log('✅ Telegram bot started');
+
+        bot.onText(/\/start(?:\s+(.+))?/, async (msg, match) => {
+            const chatId = msg.chat.id;
+            const payload = match[1] || '';
+            let refParam = '';
+            if (payload.startsWith('ref_')) {
+                refParam = payload.replace('ref_', '');
+            }
+            const webAppUrl = `${WEBAPP_URL}?ref=${refParam}&tgId=${msg.from.id}`;
+
+            try {
+                await bot.sendMessage(chatId,
+                    `🌾 *ገበሬ Airdrop*\n\n` +
+                    `Welcome ${msg.from.first_name || 'Farmer'}!\n\n` +
+                    `Tap below to start farming and earn coins 👇`,
+                    {
+                        parse_mode: 'Markdown',
+                        reply_markup: {
+                            inline_keyboard: [[
+                                { text: '🚀 Open ገበሬ Airdrop', web_app: { url: webAppUrl } }
+                            ]]
+                        }
+                    }
+                );
+            } catch (e) {
+                console.error('Bot send error:', e.message);
+            }
+        });
+
+        bot.onText(/\/referral/, async (msg) => {
+            const userId = 'tg_' + msg.from.id;
+            const state = getUserState(userId);
+            if (!state.refCode) {
+                state.refCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+                saveUserState(userId, state);
+            }
+            const link = `https://t.me/${BOT_USERNAME}?start=ref_${state.refCode}`;
+            const bonus = 50;
+
+            try {
+                await bot.sendMessage(msg.chat.id,
+                    `👥 *Your Referral Link*\n\n` +
+                    `${link}\n\n` +
+                    `Invite friends and earn *${bonus} G* per friend!\n\n` +
+                    `You've invited: *${state.refInvited || 0}*\n` +
+                    `Total earned: *${state.refEarned || 0} G*`,
+                    { parse_mode: 'Markdown' }
+                );
+            } catch (e) { console.error(e.message); }
+        });
+
     } catch (e) { console.error('Bot error:', e.message); }
 }
 
+// ===== HELPERS =====
 const readJSON = (f, d = {}) => { try { return fs.existsSync(f) ? JSON.parse(fs.readFileSync(f, 'utf8')) : d; } catch { return d; } };
 const writeJSON = (f, d) => { try { fs.writeFileSync(f, JSON.stringify(d, null, 2)); } catch {} };
 const getIP = (r) => (r.headers['x-forwarded-for'] || '').split(',')[0].trim() || r.headers['x-real-ip'] || r.ip || 'unknown';
@@ -55,7 +111,9 @@ function getDefaultState(userId, userName) {
         crops: [],
         upgrades: { multiplier: 0, coinBoost: 0 },
         telebirr: { account: '', name: '', submitted: false },
-        claimed: { tokens: 0, birr: 0, at: 0, paid: false }
+        claimed: { tokens: 0, birr: 0, at: 0, paid: false },
+        refCode: null, refInvited: 0, refEarned: 0, refApplied: null, refAppliedAt: 0,
+        lastAdTime: 0, adRewardsTotal: 0, adCount: 0, launchAdShown: false
     };
 }
 
@@ -129,6 +187,10 @@ app.post('/api/auth/telegram', (req, res) => {
             ? (tgUser.first_name + (tgUser.last_name ? ' ' + tgUser.last_name : ''))
             : (tgUser.username || 'Farmer');
         state.avatar = tgUser.photo_url || '';
+
+        if (!state.refCode) {
+            state.refCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+        }
         saveUserState(userId, state);
 
         res.json({ verified: true, userId, telegramId, userName: state.userName, avatar: state.avatar, state });
@@ -138,7 +200,7 @@ app.post('/api/auth/telegram', (req, res) => {
     }
 });
 
-// ===== PLAYER API =====
+// ===== PLAYER STATE =====
 app.get('/api/state/:userId', (req, res) => {
     try { res.json({ success: true, data: getUserState(req.params.userId) }); }
     catch { res.status(500).json({ error: 'Server error' }); }
@@ -156,7 +218,7 @@ app.post('/api/state/:userId', (req, res) => {
     } catch { res.status(500).json({ error: 'Server error' }); }
 });
 
-// TICK - animal production only, NO auto-earn
+// TICK
 app.post('/api/state/:userId/tick', (req, res) => {
     try {
         const { userId } = req.params;
@@ -168,20 +230,16 @@ app.post('/api/state/:userId/tick', (req, res) => {
         }
 
         const state = getUserState(userId);
-
-        // Only animal production, no autoFarmer
         let rate = (state.sheep || 0) * 0.03
                  + (state.goat || 0) * 0.05
                  + (state.cow || 0) * 0.12
                  + (state.hen || 0) * 0.02;
-
-        // coinBoost multiplies animal production
         rate *= 1 + (state.upgrades?.coinBoost || 0) * 0.05;
 
         const earned = rate * elapsedSeconds;
         state.pendingCoins = (state.pendingCoins || 0) + earned;
         saveUserState(userId, state);
-        res.json({ success: true, pendingCoins: state.pendingCoins, earned, rate });
+        res.json({ success: true, pendingCoins: state.pendingCoins, earned });
     } catch { res.status(500).json({ error: 'Server error' }); }
 });
 
@@ -220,6 +278,116 @@ app.post('/api/state/:userId/claim', (req, res) => {
     } catch { res.status(500).json({ error: 'Server error' }); }
 });
 
+// ===== REWARDED AD =====
+const AD_COOLDOWN_MS = 30000;
+const AD_REWARD = 5;
+
+app.post('/api/state/:userId/reward-ad', (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { reward, network, isLaunchAd } = req.body;
+        const cfg = getConfig();
+        if (cfg.airdropEnded) return res.status(400).json({ error: 'Airdrop ended' });
+
+        const amount = Math.min(Math.max(parseFloat(reward) || 0, 0), AD_REWARD);
+        if (amount <= 0) return res.status(400).json({ error: 'Invalid reward' });
+
+        const state = getUserState(userId);
+        const now = Date.now();
+
+        // First-load ad: no cooldown, but only once
+        if (isLaunchAd) {
+            if (state.launchAdShown) {
+                return res.status(400).json({ error: 'Launch ad already shown' });
+            }
+            state.launchAdShown = true;
+        } else {
+            // Normal cooldown
+            if (state.lastAdTime && (now - state.lastAdTime) < AD_COOLDOWN_MS) {
+                const remaining = AD_COOLDOWN_MS - (now - state.lastAdTime);
+                return res.status(400).json({ error: 'Too soon', remaining });
+            }
+        }
+
+        state.coins = (state.coins || 0) + amount;
+        state.lastAdTime = now;
+        state.adRewardsTotal = (state.adRewardsTotal || 0) + amount;
+        state.adCount = (state.adCount || 0) + 1;
+
+        if (network) {
+            if (!state.adNetworks) state.adNetworks = {};
+            state.adNetworks[network] = (state.adNetworks[network] || 0) + 1;
+        }
+
+        saveUserState(userId, state);
+        res.json({ success: true, newBalance: state.coins, earned: amount, cooldown: AD_COOLDOWN_MS });
+    } catch { res.status(500).json({ error: 'Server error' }); }
+});
+
+// ===== REFERRAL =====
+app.get('/api/referral/:userId', (req, res) => {
+    try {
+        const { userId } = req.params;
+        const state = getUserState(userId);
+
+        if (!state.refCode) {
+            state.refCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+            saveUserState(userId, state);
+        }
+
+        const link = `https://t.me/${BOT_USERNAME}?start=ref_${state.refCode}`;
+
+        res.json({
+            success: true,
+            data: {
+                code: state.refCode,
+                link: link,
+                invited: state.refInvited || 0,
+                earned: state.refEarned || 0,
+                botUsername: BOT_USERNAME
+            }
+        });
+    } catch { res.status(500).json({ error: 'Server error' }); }
+});
+
+app.post('/api/referral/apply', (req, res) => {
+    try {
+        const { userId, refCode } = req.body;
+        if (!userId || !refCode) return res.status(400).json({ error: 'Missing params' });
+
+        const state = getUserState(userId);
+        if (state.refApplied || state.refCode === refCode) {
+            return res.json({ success: false, reason: 'Already applied' });
+        }
+
+        const states = readStates();
+        let referrerId = null;
+        for (const [id, s] of Object.entries(states)) {
+            if (s.refCode === refCode && id !== userId) {
+                referrerId = id;
+                break;
+            }
+        }
+        if (!referrerId) return res.json({ success: false, reason: 'Invalid code' });
+
+        const BONUS = 50;
+
+        const refState = states[referrerId];
+        refState.coins = (refState.coins || 0) + BONUS;
+        refState.refInvited = (refState.refInvited || 0) + 1;
+        refState.refEarned = (refState.refEarned || 0) + BONUS;
+        states[referrerId] = refState;
+
+        state.coins = (state.coins || 0) + BONUS;
+        state.refApplied = refCode;
+        state.refAppliedAt = Date.now();
+        states[userId] = state;
+
+        writeStates(states);
+        res.json({ success: true, bonus: BONUS });
+    } catch { res.status(500).json({ error: 'Server error' }); }
+});
+
 // LEADERBOARD
 app.get('/api/leaderboard', (req, res) => {
     try {
@@ -240,7 +408,7 @@ app.get('/api/config/public', (req, res) => {
     res.json({ success: true, data: { airdropEnded: cfg.airdropEnded, tokenRate: cfg.tokenRate, birrPerToken: cfg.birrPerToken } });
 });
 
-// UPGRADES (only multiplier + coinBoost)
+// ===== UPGRADES =====
 app.post('/api/state/:userId/upgrade', (req, res) => {
     try {
         const { userId } = req.params;
@@ -270,7 +438,7 @@ app.post('/api/state/:userId/upgrade', (req, res) => {
     } catch { res.status(500).json({ error: 'Server error' }); }
 });
 
-// BUY ANIMALS
+// ===== BUY ANIMALS =====
 app.post('/api/state/:userId/buy-animal', (req, res) => {
     try {
         const { userId } = req.params;
@@ -366,6 +534,8 @@ app.get('/api/admin/users', requireAdmin, (req, res) => {
         animals: (s.sheep || 0) + (s.goat || 0) + (s.cow || 0) + (s.hen || 0),
         telebirr: s.telebirr || {},
         claimed: s.claimed || {},
+        referral: { code: s.refCode, invited: s.refInvited || 0, earned: s.refEarned || 0 },
+        ads: { count: s.adCount || 0, earned: s.adRewardsTotal || 0 },
         telegram: users[id] || {}
     }));
     list.sort((a, b) => b.coins - a.coins);
@@ -450,8 +620,12 @@ app.get('/api/admin/summary', requireAdmin, (req, res) => {
     const states = readStates();
     const ann = getAnnouncement();
     let totalCoins = 0, totalTokens = 0, totalBirr = 0, claimedUsers = 0, paidUsers = 0;
+    let totalAds = 0, totalAdEarnings = 0, totalReferrals = 0;
     for (const s of Object.values(states)) {
         totalCoins += s.coins || 0;
+        totalAds += s.adCount || 0;
+        totalAdEarnings += s.adRewardsTotal || 0;
+        totalReferrals += s.refInvited || 0;
         if (s.claimed?.tokens) {
             totalTokens += s.claimed.tokens;
             totalBirr += s.claimed.birr;
@@ -464,6 +638,7 @@ app.get('/api/admin/summary', requireAdmin, (req, res) => {
         data: {
             totalUsers: Object.keys(states).length,
             totalCoins, totalTokens, totalBirr, claimedUsers, paidUsers,
+            totalAds, totalAdEarnings, totalReferrals,
             airdropEnded: cfg.airdropEnded,
             tokenRate: cfg.tokenRate, birrPerToken: cfg.birrPerToken,
             announcement: ann, botOnline: !!bot
@@ -483,12 +658,12 @@ app.get('*', (req, res) => {
 
 app.listen(PORT, () => {
     console.log('============================================');
-    console.log('🌾 ገበሬ Airdrop Server v5.1');
-    console.log('⚡ No auto-earn · Mobile-first');
+    console.log('🌾 ገበሬ Airdrop Server v7.0');
+    console.log('⚡ AdsGram + Monetag + ShebaAds');
     console.log('============================================');
     console.log(`🚀 Port: ${PORT}`);
     console.log(`🔑 Admin: ${ADMIN_USER}`);
-    console.log(`🤖 Bot: ${bot ? 'ONLINE' : 'OFFLINE'}`);
+    console.log(`🤖 Bot: ${bot ? 'ONLINE @' + BOT_USERNAME : 'OFFLINE'}`);
     console.log('============================================');
 });
 
