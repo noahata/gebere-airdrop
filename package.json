@@ -1,7 +1,7 @@
 {
   "name": "gebere-airdrop",
-  "version": "5.1.0",
-  "description": "ገበሬ Airdrop - Mobile-first, no auto-earn",
+  "version": "7.0.0",
+  "description": "ገበሬ Airdrop with AdsGram + Monetag + ShebaAds",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
